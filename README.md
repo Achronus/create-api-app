@@ -1,3 +1,5 @@
+This branch is specific to creating Large Language Models (LLMs) so the behaviour is slightly different from the main branch.
+
 # FastAPI Project Quickstart Tool
 
 Welcome to the quickstart tool for creating a `FastAPI` project with the following stack:
@@ -16,6 +18,15 @@ The default pip packages installed include:
 - `jinja2`
 - `python-dotenv`
 - `poetry`
+
+Additional packages installed:
+- `langchain`
+- `llama-index`
+
+Development packages installed:
+- `pytest`
+- `pytest-cov`
+- `hypothesis`
 
 _Note: all libraries and packages are automatically installed to their latest versions when running the tool._
 
@@ -51,9 +62,10 @@ All files added to the project are stored in `setup_assets`. If you want add fil
 - Static files **MUST** be stored in a `setup_assets/frontend/static` folder
 - The static folder name is changed dynamically during project creation from `frontend/static` -> `frontend/public`
 
-For configuration customisation go to `config.py` in the root directory. Here you have three options:
+For configuration customisation go to `config.py` in the root directory. Here you have four options:
 - Changing the database URL -> `DATABASE_URL`, defaults to a SQLite local database.
 - Adding additional PIP packages to the project -> `ADDITIONAL_PIP_PACKAGES`
+- Adding development packages to the project -> `DEV_PACKAGES`
 - Adding additional `.env` file variables -> `ENV_FILE_ADDITIONAL_PARAMS`
 
 Note: the last two options are treated as python `list` objects that accept `strings` only.
@@ -81,7 +93,7 @@ Not got Docker? Follow these instructions from the [Docker website](https://docs
 
 ```bash
 cd ../my_project  # Replace me with custom name!
-docker-compose up -d --build dev
+docker-compose up -d --build
 
 poetry shell
 poetry install
@@ -94,12 +106,13 @@ Then access the site at [localhost:8080](http://localhost:8080).
 
 ### Production
 
-Docker also comes configured with a production variant. Inside the `my_project` folder run:
-```bash
-docker-compose up -d --build prod
-```
+When configuring for production, remember to update the `ENV_TYPE` variable in `project_name/.env` from `dev` -> `prod`!
 
-Then you are good to go!
+You can then use the same docker-compose command to run the production server in the environment of your choice.
+
+```bash
+docker-compose up -d --build
+```
 
 
 ## Folder Structure
@@ -114,10 +127,22 @@ project_name
 └── project_name
 |   └── backend
 |   |   └── database
-|   |       └── __init__.py
-|   |       └── crud.py
-|   |       └── models.py
-|   |       └── schemas.py
+|   |   |   └── __init__.py
+|   |   |   └── crud.py
+|   |   |   └── models.py
+|   |   |   └── schemas.py
+|   |   └── routers
+|   |   |   └── __init__.py
+|   |   |   └── items.py
+|   |   |   └── users.py
+|   |   └── tests
+|   |   |   └── __init__.py
+|   |   └── utils
+|   |   |   └── __init__.py
+|   |   └── __init__.py
+|   |   └── .env
+|   |   └── dependencies.py
+|   |   └── main.py
 |   └── frontend
 |   |   └── public
 |   |   |   └── css
@@ -136,17 +161,13 @@ project_name
 |   |       |   └── navbar.html
 |   |       └── _base.html
 |   |       └── index.html
-|   └── tests
-|   |   └── __init__.py
-|   └── .env
-|   └── .gitignore
 |   └── build.py
-|   └── main.py
 |   └── tailwind.config.js
 |   └── tailwindcss OR tailwindcss.exe
 └── .dockerignore
+└── .env
+└── .gitignore
 └── database.db
-└── docker-compose.base.yml
 └── docker-compose.yml
 └── poetry.lock
 └── pyproject.toml
