@@ -2,14 +2,13 @@
 DATABASE_URL = 'sqlite:///./database.db'
 # DATABASE_URL = "postgresql://user:password@postgresserver/db"
 
-# Core packages to install
-ADDITIONAL_PIP_PACKAGES = [
+# Additional backend packages to install
+BACKEND_ADDITIONAL_PACKAGES = [
     "langchain",
-    "llama-index"
 ]
 
-# Development packages to install
-DEV_PACKAGES = [
+# Development backend packages to install
+BACKEND_DEV_PACKAGES = [
     "pytest",
     "pytest-cov",
     "hypothesis"

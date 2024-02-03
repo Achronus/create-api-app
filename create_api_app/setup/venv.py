@@ -6,7 +6,7 @@ from ..conf.constants import VENV, VENV_NAME, CORE_PIP_PACKAGES
 from ..conf.constants.filepaths import get_project_name
 from ..conf.constants.poetry import PoetryContent
 from ..conf.file_handler import insert_into_file
-from ..config import ADDITIONAL_PIP_PACKAGES, DEV_PACKAGES
+from ..config import BACKEND_ADDITIONAL_PACKAGES, BACKEND_DEV_PACKAGES
 from .base import ControllerBase
 
 
@@ -38,7 +38,7 @@ class VEnvController(ControllerBase):
     @staticmethod
     def install() -> None:
         """Installs a set of `PIP` packages."""
-        subprocess.run([os.path.join(VENV, "pip"), "install", "poetry", *CORE_PIP_PACKAGES, *ADDITIONAL_PIP_PACKAGES], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run([os.path.join(VENV, "pip"), "install", "poetry", *CORE_PIP_PACKAGES, *BACKEND_ADDITIONAL_PACKAGES], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def init_project(self) -> None:
         """Creates a poetry project."""
@@ -61,9 +61,9 @@ class VEnvController(ControllerBase):
         """Adds PIP packages to the poetry project."""
         subprocess.run(["poetry", "shell"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        subprocess.run(["poetry", "add", *CORE_PIP_PACKAGES, *ADDITIONAL_PIP_PACKAGES], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["poetry", "add", *CORE_PIP_PACKAGES, *BACKEND_ADDITIONAL_PACKAGES], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        subprocess.run(["poetry", "add", *DEV_PACKAGES, '--dev'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["poetry", "add", *BACKEND_DEV_PACKAGES, '--dev'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         # Move into project directory
         os.chdir(self.project_paths.PROJECT)

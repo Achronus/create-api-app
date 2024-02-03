@@ -1,74 +1,102 @@
-This branch is specific to creating Large Language Models (LLMs) so the behaviour is slightly different from the main branch.
+__Note: This project is a work in progress!__
 
-# FastAPI Project Quickstart Tool
+# Create API App Quickstart Tool
 
-Welcome to the quickstart tool for creating a `FastAPI` project with the following stack:
+Welcome to the quickstart tool for creating a `FastAPI` project with a `NextJS` frontend.
+
+## Why This Tool?
+
+Creating a project from scratch can be a tedious process. I've found limited tools for creating a `FastAPI` and `NextJS` app together that are suitable for my requirements. So, I built my own! 
+
+I use this tool personally for `SaaS` and `ML API` projects and have found it extremely useful for immediately diving into coding without faffing around with minor setup details (except API keys!). Hopefully it's useful to you too!
+
+The projects created using this tool come configured with a `development (dev)` and `production (prod)` mode that both use `Docker` containers to operate. More details on this below in the [Creation](#creation) section.
+
+## The Stack
+
+All projects are created using the same stack for simplicity, and to provide a template. Some options are configurable. Refer to the [Customisation and Configuration](#customisation-and-configuration) section for more details.
+
+The main elements of the stack include:
 
 - [FastAPI](https://github.com/tiangolo/fastapi)
-- [Jinja2 Templates](https://jinja.palletsprojects.com/)
-- [TailwindCSS](https://tailwindcss.com/) and [Flowbite](https://flowbite.com/)
-- [AlpineJS](https://alpinejs.dev/)
-- [HTMX](https://htmx.org/)
+- [NextJS](https://nextjs.org/)
+- [TailwindCSS](https://tailwindcss.com/)
 
-The default pip packages installed include:
+_Note: all libraries and packages are automatically installed to their latest versions when running the tool._
+
+### Backend 
+
+For the backend, the default packages installed include:
 
 - `fastapi`
 - `uvicorn[standard]`
-- `sqlalchemy`
-- `jinja2`
 - `python-dotenv`
 - `poetry`
 
-Additional packages installed:
-- `langchain`
-- `llama-index`
+Additional packages installed (changeable):
 
-Development packages installed:
+- `langchain`
+
+Development packages installed (changeable):
+
 - `pytest`
 - `pytest-cov`
 - `hypothesis`
 
-_Note: all libraries and packages are automatically installed to their latest versions when running the tool._
+### Frontend
 
-## Why This Tool?
+For the frontend, the default packages are:
 
-Creating a project from scratch can be a tedious process. So, I wanted to simplify it! This tool is ideal for those that are looking to quickly prototype a project without worrying about `JavaScript` frameworks, such as `Backend Developers` and `ML Engineers`.
+- [NVM](https://docs.uploadthing.com/getting-started/appdir) - For managing the node package version
+- [Clerk](https://clerk.com/) & [Clerk Themes](https://clerk.com/docs/components/customization/themes) - User management
+- [Uploadthing](https://docs.uploadthing.com/) - File management
+- [Shadcn UI](https://ui.shadcn.com/) - Component library
 
-The tool does the following:
+Additionally, the template uses styling elements from these two resources:
 
-- Creates a virtual environment in the project folder
-- Accesses it, updates `PIP` and installs the required packages
-- Creates a `.env` file
-- Creates a `backend` directory with a basic application template for `FastAPI`
-- Creates a `frontend` directory with some basic `Jinja2` template files
-  - Such as a `_base.html` and `index.html`
-- Creates a `frontend/public` files directory for storing `css`, `js`, and `img` files locally
-  - Adds `TailwindCSS`, `Flowbite`, `HTMX`, and `AlpineJS` static files
-- Performs some file cleanup such as removing `node_modules` (if your OS supports TailwindCSS standalone CLI), `venv` and `package.json` files
+- [Shadcn UI Theme Generator](https://gradient.page/tools/shadcn-ui-theme-generator)
+- [Modern Background Snippets](https://bg.ibelick.com/)
+
+I encourage you to play around with them yourself!
 
 ## Dependencies
 
-The tool is intended to be dynamic and aims to install the most recent packages where possible. To do this, we require [NodeJS](https://nodejs.org/en), `NPM` and [Python](https://www.python.org/downloads/) to be installed on your local machine, with the latest stable versions. 
+The tool is intended to be dynamic and aims to install the most recent packages where possible. To do this, we use [Node Version Manager (NVM)](https://github.com/nvm-sh/nvm?tab=readme-ov-file#intro) with `NPM` and [Python (currently 3.12.1)](https://www.python.org/downloads/). 
 
-We use `node_modules` and `PIP` to maintain the latest versions of the core stack, and remove the `node_modules` after creation to simplify the project folder.
+_Unfortunately, at the time of creating this [bun](https://bun.sh/) is experimental with Windows so we opted for `NPM` instead. [Issue request](https://github.com/Achronus/create-api-app/issues/2) added for future consideration._
 
-Fortunately, `Tailwind` has a [Standalone CLI](https://tailwindcss.com/blog/standalone-cli) that allows us to watch and minify files without needing `NodeJS`!
+The `Python` packages are stored within a `poetry` project in the `<project_name>/backend` directory. 
 
+The `NextJS` application uses `node_modules` and is stored in the `<project_name>/frontend` directory.
 
-### Customisation and Configuration
+This application is developed on a Windows machine so you may experience issues on `Linux/Mac OS`. I encourage you still to try it and flag any issues in the [issues](https://github.com/Achronus/create-api-app/issues) section. Compatibility has been considered but needs more rigorous testing ([Compatibility discussion here](https://github.com/Achronus/create-api-app/issues/3))!
 
-All files added to the project are stored in `setup_assets`. If you want add files, feel free but it is recommended not to mess with the file structure. Here a few things to note:
-- All the files are added to the `project` root directory
-- Static files **MUST** be stored in a `setup_assets/frontend/static` folder
-- The static folder name is changed dynamically during project creation from `frontend/static` -> `frontend/public`
+## Customisation and Configuration
 
-For configuration customisation go to `config.py` in the root directory. Here you have four options:
-- Changing the database URL -> `DATABASE_URL`, defaults to a SQLite local database.
-- Adding additional PIP packages to the project -> `ADDITIONAL_PIP_PACKAGES`
-- Adding development packages to the project -> `DEV_PACKAGES`
-- Adding additional `.env` file variables -> `ENV_FILE_ADDITIONAL_PARAMS`
+### Customisation
 
-Note: the last two options are treated as python `list` objects that accept `strings` only.
+All files added to the project are stored in `setup_assets`. You can add additional files that you want but there are a few things to note:
+1. `setup_assets` is divided into three parts: `backend`, `frontend`, `root` (no directory) 
+2. `backend` files must be in the `setup_assets/backend` folder
+3. `frontend` files must be in the `setup_assets/frontend` folder
+4. Root project files must be in the root of `setup_assets` - e.g., `setup_assets/.gitignore`
+5. Static files **MUST** be stored in a `setup_assets/frontend/static` folder
+   - The static folder assets are moved automatically into the `<project_name>/frontend/public` folder
+
+### Configuration
+
+To customise the configuration go to `create_api_app/config.py`. Here you can:
+- Change the database URL -> `DATABASE_URL`, which defaults to a SQLite local database.
+- Add additional `backend` packages to the project -> `BACKEND_ADDITIONAL_PACKAGES`
+- Add `backend` development packages to the project -> `BACKEND_DEV_PACKAGES`
+- Add additional `.env` file variables -> `ENV_FILE_ADDITIONAL_PARAMS`
+
+Most of the configuration options are treated as `list` items that accept `strings`, except the `DATABASE_URL` which is a `string` itself!
+
+The database is automatically setup depending on the start of the `DATABASE_URL`. Currently the options are:
+- SQLite
+- PostgresSQL
+- MongoDB
 
 
 ### Creation
