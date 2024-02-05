@@ -1,4 +1,4 @@
-__Note: This project is a work in progress!__
+__Note: This project is a work in progress and does NOT currently work! Check back once a version is released!__
 
 # Create API App Quickstart Tool
 
@@ -6,17 +6,15 @@ Welcome to the quickstart tool for creating a `FastAPI` project with a `NextJS` 
 
 ## Why This Tool?
 
-Creating a project from scratch can be a tedious process. I've found limited tools for creating a `FastAPI` and `NextJS` app together that are suitable for my requirements. So, I built my own! 
+Creating a project from scratch can be a tedious process. Not only do you have to create all the files yourself, it typically requires a lot of small minor changes that can easily be automated. So, rather than wasting a lot of time setting up projects, I created a tool that does it all for me! 
 
-I use this tool personally for `SaaS` and `ML API` projects and have found it extremely useful for immediately diving into coding without faffing around with minor setup details (except API keys!). Hopefully it's useful to you too!
-
-The projects created using this tool come configured with a `development (dev)` and `production (prod)` mode that both use `Docker` containers to operate. More details on this below in the [Creation](#creation) section.
+I use this tool personally for `SaaS` and `ML API` projects and have found it extremely useful for immediately diving into coding without faffing around with setup details (except for configuring API keys). Hopefully, it's useful to you too!
 
 ## The Stack
 
-All projects are created using the same stack for simplicity, and to provide a template. Some options are configurable. Refer to the [Customisation and Configuration](#customisation-and-configuration) section for more details.
+All projects are created using the same stack. To maintain a consistent template, and keep things simple, we've limited the customisation to one parameter: a `DATABASE_URL`. Refer to the [Customisation and Configuration](#customisation-and-configuration) section for more details.
 
-The main elements of the stack include:
+The project stack contains three main elements:
 
 - [FastAPI](https://github.com/tiangolo/fastapi)
 - [NextJS](https://nextjs.org/)
@@ -26,18 +24,15 @@ _Note: all libraries and packages are automatically installed to their latest ve
 
 ### Backend 
 
-For the backend, the default packages installed include:
+For the backend, we use [poetry](https://python-poetry.org/) to manage our dependencies and install the following default packages:
 
+#### Production 
 - `fastapi`
 - `uvicorn[standard]`
 - `python-dotenv`
 - `poetry`
 
-Additional packages installed (changeable):
-
-- `langchain`
-
-Development packages installed (changeable):
+#### Development
 
 - `pytest`
 - `pytest-cov`
@@ -45,9 +40,8 @@ Development packages installed (changeable):
 
 ### Frontend
 
-For the frontend, the default packages are:
+For the frontend, we use [bun](https://bun.sh/) with [Node Version Manager (NVM)](https://github.com/nvm-sh/nvm?tab=readme-ov-file#intro) to manage our packages. By default we install:
 
-- [NVM](https://docs.uploadthing.com/getting-started/appdir) - For managing the node package version
 - [Clerk](https://clerk.com/) & [Clerk Themes](https://clerk.com/docs/components/customization/themes) - User management
 - [Uploadthing](https://docs.uploadthing.com/) - File management
 - [Shadcn UI](https://ui.shadcn.com/) - Component library
@@ -61,143 +55,114 @@ I encourage you to play around with them yourself!
 
 ## Dependencies
 
-The tool is intended to be dynamic and aims to install the most recent packages where possible. To do this, we use [Node Version Manager (NVM)](https://github.com/nvm-sh/nvm?tab=readme-ov-file#intro) with `NPM` and [Python (currently 3.12.1)](https://www.python.org/downloads/). 
+The tool is intended to be dynamic and aims to install the most recent packages where possible, while maintaining compatibility across the main OS's (Mac, Linux and Windows). After reviewing multiple tools, we decided [Docker](https://www.docker.com/) was the best solution for our purpose. Also, the projects the tool creates use `Docker` themselves, so it really was a no brainer!
 
-_Unfortunately, at the time of creating this [bun](https://bun.sh/) is experimental with Windows so we opted for `NPM` instead. [Issue request](https://github.com/Achronus/create-api-app/issues/2) added for future consideration._
+We use `docker-compose` to switch between `development (dev)` and `production (prod)` seamlessly, and make the project management easy by separating the `frontend` and `backend` into separate containers.
 
-The `Python` packages are stored within a `poetry` project in the `<project_name>/backend` directory. 
+We store the `Python` `poetry` project in the `<project_name>/backend` directory (for the FastAPI app), and the `NextJS` application (that uses `node_modules`) in the `<project_name>/frontend` directory.
 
-The `NextJS` application uses `node_modules` and is stored in the `<project_name>/frontend` directory.
-
-This application is developed on a Windows machine so you may experience issues on `Linux/Mac OS`. I encourage you still to try it and flag any issues in the [issues](https://github.com/Achronus/create-api-app/issues) section. Compatibility has been considered but needs more rigorous testing ([Compatibility discussion here](https://github.com/Achronus/create-api-app/issues/3))!
+We've taken great care to try to maximise compatibility across the main OS's, but still expect bugs to surface. If there are any issues using the tool, please flag them in the [issues](https://github.com/Achronus/create-api-app/issues) section of this repository.
 
 ## Customisation and Configuration
 
-### Customisation
+As mentioned previously, we've limited the customisation to the `DATABASE_URL`. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
 
-All files added to the project are stored in `setup_assets`. You can add additional files that you want but there are a few things to note:
-1. `setup_assets` is divided into three parts: `backend`, `frontend`, `root` (no directory) 
-2. `backend` files must be in the `setup_assets/backend` folder
-3. `frontend` files must be in the `setup_assets/frontend` folder
-4. Root project files must be in the root of `setup_assets` - e.g., `setup_assets/.gitignore`
-5. Static files **MUST** be stored in a `setup_assets/frontend/static` folder
-   - The static folder assets are moved automatically into the `<project_name>/frontend/public` folder
+The tool is designed to provide a base template for `FastAPI` and `NextJS` projects, allowing developers to quickly create a skeleton project that they can configure themselves. Adding extra unnecessary complexity would only makes things more complicated, so we went back to basics and focused on the essentials.
 
-### Configuration
+Fortunately, this reduced the tool down to two simple commands: `docker build` and `docker run`. We'll discuss this more in the next section.
 
-To customise the configuration go to `create_api_app/config.py`. Here you can:
-- Change the database URL -> `DATABASE_URL`, which defaults to a SQLite local database.
-- Add additional `backend` packages to the project -> `BACKEND_ADDITIONAL_PACKAGES`
-- Add `backend` development packages to the project -> `BACKEND_DEV_PACKAGES`
-- Add additional `.env` file variables -> `ENV_FILE_ADDITIONAL_PARAMS`
+Firstly, we want to highlight that the appropriate dependencies are automatically setup depending on the start of the `DATABASE_URL`. For example, consider the following url:
 
-Most of the configuration options are treated as `list` items that accept `strings`, except the `DATABASE_URL` which is a `string` itself!
-
-The database is automatically setup depending on the start of the `DATABASE_URL`. Currently the options are:
-- SQLite
-- PostgresSQL
-- MongoDB
-
-
-### Creation
-1. To get started, clone the repository, enter the folder and run `create` with a `name` (e.g., `my_project`) argument inside a `poetry shell`. This creates a new project inside the `parent` directory of the `fastapi-quickstart` directory:
-
-```bash
-git clone https://github.com/Achronus/fastapi-quickstart.git
-cd fastapi-quickstart
-poetry shell
-create my_project  # Replace me with custom name!
+```
+postgresql://<username>:<password>@postgresserver/db
 ```
 
-For example, if you have a parent folder called `projects` and are making a project called `todo_app` the project is created in `projects/todo_app` instead of `projects/fastapi-quickstart/todo_app`.
+When the first part of the url (before `://`) contains `sql`, [sqlalchemy](https://www.sqlalchemy.org/) is configured on the `backend`. However, if it contains `mongo` we assume a `MongoDB` database and [beanie](https://beanie-odm.dev/) is configured instead.
+
+If using a `SQL` database, we strongly advise starting with a local database such as `SQLite`. You can create one using this url:
+```
+sqlite:///./database.db
+```
+
+SQL is typically easier to implement, due to the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/sql-databases/?h=sql). However, we personally prefer `MongoDB` due to its [sustainability goals](https://www.mongodb.com/company/sustainability), so we cannot help but encourage others to use it as well!
 
 
-### And That's It!
+## Using The Tool
+_❔ Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/)_.
 
-Everything is setup with a blank template ready to start building a project from scratch. Run the following commands to run the docker `development` server and watch `TailwindCSS` locally!
-
-Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/).
-
+1. To get started, clone the repository, enter the folder and run the docker commands:
 
 ```bash
-cd ../my_project  # Replace me with custom name!
+git clone https://github.com/Achronus/create-api-app.git
+cd create-api-app
+docker build ?
+docker run ?
+```
+
+In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete you a new folder is added inside it with the desired `<project_name>`. Move the folder to where you want, and then tweak it as need. 
+
+_❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean up the container and its images, removing them after the project is successfully built._
+
+### Starting A Project
+
+With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
+
+```bash
+cd `<file_path>/<project_name>`  # Navigate to the project directory...
 docker-compose up -d --build
-
-poetry shell
-poetry install
-
-watch
 ```
 
 Then access the site at [localhost:8080](http://localhost:8080).
 
+### Moving To Production
 
-### Production
+When moving to production, simply update the `ENV_TYPE` variable in `<project_name>/.env.prod` from `dev` -> `prod`!
 
-When configuring for production, remember to update the `ENV_TYPE` variable in `project_name/.env` from `dev` -> `prod`!
-
-You can then use the same docker-compose command to run the production server in the environment of your choice.
+You can then use the same docker-compose command to run the production environment.
 
 ```bash
 docker-compose up -d --build
 ```
 
-
-## Folder Structure
+### Folder Structure
 
 The newly created project should look similar to the following:
 
 ```bash
-project_name
+<project_name>
 └── config
 |   └── docker
 |   |   └── Dockerfile.backend
-└── project_name
+|   |   └── Dockerfile.frontend
+└── <project_name>
 |   └── backend
 |   |   └── database
-|   |   |   └── __init__.py
-|   |   |   └── crud.py
-|   |   |   └── models.py
-|   |   |   └── schemas.py
+|   |   |   └── ...
 |   |   └── routers
-|   |   |   └── __init__.py
-|   |   |   └── items.py
-|   |   |   └── users.py
+|   |   |   └── ...
 |   |   └── tests
-|   |   |   └── __init__.py
+|   |   |   └── ...
 |   |   └── utils
-|   |   |   └── __init__.py
+|   |   |   └── ...
 |   |   └── __init__.py
-|   |   └── .env
-|   |   └── dependencies.py
+|   |   └── .env.local
 |   |   └── main.py
 |   └── frontend
+|   |   └── node_modules
+|   |   |   └── ...
 |   |   └── public
-|   |   |   └── css
-|   |   |   |   └── flowbite.min.css
-|   |   |   |   └── input.css
-|   |   |   |   └── style.min.css
-|   |   |   └── imgs
-|   |   |   |   └── avatar.svg
-|   |   |   └── js
-|   |   |       └── alpine.min.js
-|   |   |       └── flowbite.min.js
-|   |   |       └── htmx.min.js
-|   |   |       └── theme-toggle.js
-|   |   └── templates
-|   |       └── components
-|   |       |   └── navbar.html
-|   |       └── _base.html
-|   |       └── index.html
+|   |   |   └── ...
+|   |   └── src
+|   |   |   └── ...
+|   └── __init__.py
 |   └── build.py
-|   └── tailwind.config.js
-|   └── tailwindcss OR tailwindcss.exe
 └── .dockerignore
-└── .env
+└── .env.prod
 └── .gitignore
-└── database.db
+└── database.db  # SQLite only!
 └── docker-compose.yml
 └── poetry.lock
 └── pyproject.toml
+└── pytest.ini
 └── README.md
 ```

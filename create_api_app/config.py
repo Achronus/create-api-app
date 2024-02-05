@@ -1,6 +1,6 @@
 # Define your database URL
 DATABASE_URL = 'sqlite:///./database.db'
-# DATABASE_URL = "postgresql://user:password@postgresserver/db"
+# DATABASE_URL = "postgresql://<username>:<password>@postgresserver/db"
 
 # Additional backend packages to install
 BACKEND_ADDITIONAL_PACKAGES = [
