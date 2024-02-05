@@ -108,7 +108,7 @@ _❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean
 With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
 
 ```bash
-cd `<file_path>/<project_name>`  # Navigate to the project directory...
+cd <file_path>/<project_name>  # Navigate to the project directory...
 docker-compose --env-file .env.prod up -d --build
 ```
 
@@ -136,14 +136,18 @@ The newly created project should look similar to the following:
 |   |   └── Dockerfile.frontend
 └── <project_name>
 |   └── backend
-|   |   └── database
+|   |   └── config
+|   |   |   └── __init__.py
+|   |   |   └── settings.py
+|   |   └── db
 |   |   |   └── ...
 |   |   └── routers
 |   |   |   └── ...
 |   |   └── tests
 |   |   |   └── ...
 |   |   └── utils
-|   |   |   └── ...
+|   |   |   └── __init__.py
+|   |   |   └── fileloader.py
 |   |   └── __init__.py
 |   |   └── .env.local
 |   |   └── main.py
