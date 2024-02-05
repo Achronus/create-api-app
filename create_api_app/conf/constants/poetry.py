@@ -1,4 +1,3 @@
-from . import STATIC_DIR_NAME
 from ..helper import set_tw_standalone_filename
 from .filepaths import get_project_name, AssetFilenames
 
@@ -39,29 +38,20 @@ class PoetryContent:
         self.BUILD_FILE_CONTENT = f"""
         import os
         import subprocess
-        from pathlib import Path
-        from dotenv import load_dotenv
+
+        from .backend.config.settings import settings
 
         import uvicorn
 
-        ROOT_PATH = Path(__file__).resolve().parent.parent
-        ROOT_ENV = os.path.join(ROOT_PATH, '.env')
-
-        load_dotenv(ROOT_ENV)
-
-        PROJECT_DIR = os.path.basename(ROOT_PATH)
-        CSS_DIR = os.path.join('frontend', '{STATIC_DIR_NAME}', 'css')
-        INPUT_PATH = os.path.join(CSS_DIR, 'input.css')
-        OUTPUT_PATH = os.path.join(CSS_DIR, 'styles.min.css')
 
         def start() -> None:
             {self.start_desc}
             reload_check = True if os.getenv('ENV_TYPE') == 'dev' else False
 
             uvicorn.run(
-                f"{{os.getenv('PROJECT_NAME')}}.backend.main:app", 
-                host=os.getenv('HOST'), 
-                port=int(os.getenv('PORT')), 
+                f"{{settings.PROJECT_NAME}}.backend.main:app", 
+                host=settings.HOST, 
+                port=settings.PORT, 
                 reload=reload_check 
         )
 
@@ -71,4 +61,8 @@ class PoetryContent:
             cmd = f"{'npx ' if self.tw_type == 'unsupported' else ''}{self.commands.WATCH_TW_CMD}"
             os.chdir(os.path.join(os.getcwd(), '{self.project_name}'))
             subprocess.run(cmd.split(' '), check=True)
+        
+        
+        if __name__ == "__main__":
+            start()
         """

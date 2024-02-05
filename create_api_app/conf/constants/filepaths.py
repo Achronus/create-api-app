@@ -114,6 +114,8 @@ class ProjectPaths:
         self.JS = os.path.join(self.STATIC, SetupAssetsDirNames.JS)
         self.IMGS = os.path.join(self.STATIC, SetupAssetsDirNames.IMGS)
 
+        self.BACKEND_TESTS = os.path.join(self.BACKEND, 'tests')
+
 
 # Dockerfile specific directory and filename filepaths
 class DockerPaths:

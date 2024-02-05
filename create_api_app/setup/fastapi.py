@@ -5,9 +5,9 @@ import subprocess
 
 from .base import ControllerBase
 from ..conf.constants.fastapi import FastAPIDirPaths, FastAPIContent
-from ..conf.constants.filepaths import get_db_url
+from ..conf.constants.filepaths import get_db_url, get_project_name
 from ..conf.constants.poetry import PoetryCommands, PoetryContent
-from ..conf.file_handler import insert_into_file
+from ..conf.file_handler import insert_into_file, replace_content
 
 
 class FastAPIFileController(ControllerBase):
@@ -15,7 +15,8 @@ class FastAPIFileController(ControllerBase):
     def __init__(self) -> None:
         tasks = [
             (self.check_db, "Configuring [red]database[/red] files"),
-            (self.create_build, "Creating [yellow]build[/yellow] file")
+            (self.create_build, "Creating [yellow]build[/yellow] file"),
+            (self.check_tests, "Checking [yellow]unit test[/yellow] files")
         ]
 
         super().__init__(tasks)
@@ -66,3 +67,20 @@ class FastAPIFileController(ControllerBase):
 
         with open(self.project_paths.PROJECT_BUILD, 'w') as file:
             file.write(content)
+
+
+    def check_tests(self) -> None:
+        """Checks and updates test files to replace the `<REPLACE>` tag with the project name."""
+        project_name = get_project_name()
+        files_to_update = [
+            os.path.join(self.project_paths.BACKEND_TESTS, 'test_filepaths.py'),
+            os.path.join(self.project_paths.BACKEND_TESTS, 'test_fixtures.py')
+        ]
+
+        for filepath in files_to_update:
+            replace_content(
+                '<REPLACE>',
+                project_name,
+                filepath,
+                -1
+            )
