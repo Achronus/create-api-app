@@ -16,7 +16,7 @@ class FastAPIFileController(ControllerBase):
         tasks = [
             (self.check_db, "Configuring [red]database[/red] files"),
             (self.create_build, "Creating [yellow]build[/yellow] file"),
-            (self.check_tests, "Checking [yellow]unit test[/yellow] files")
+            (self.check_tests, "Checking [yellow]test[/yellow] files")
         ]
 
         super().__init__(tasks)
@@ -84,3 +84,6 @@ class FastAPIFileController(ControllerBase):
                 filepath,
                 -1
             )
+
+        with open(self.project_paths.PYTEST_INI, 'w') as file:
+            file.write(FastAPIContent.PYTEST_INI)

@@ -115,6 +115,7 @@ class ProjectPaths:
         self.IMGS = os.path.join(self.STATIC, SetupAssetsDirNames.IMGS)
 
         self.BACKEND_TESTS = os.path.join(self.BACKEND, 'tests')
+        self.PYTEST_INI = os.path.join(os.path.dirname(self.ROOT), 'pytest.ini')
 
 
 # Dockerfile specific directory and filename filepaths

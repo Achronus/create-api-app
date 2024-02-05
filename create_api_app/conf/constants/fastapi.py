@@ -1,4 +1,5 @@
 import os
+import textwrap
 
 from .filepaths import ProjectPaths
 
@@ -25,3 +26,12 @@ class FastAPIDirPaths:
 class FastAPIContent:
     SQLITE_DB_POSITION = "os.getenv('DATABASE_URL')"
     SQLITE_DB_CONTENT = ', connect_args={"check_same_thread": False}'
+
+    PYTEST_INI = textwrap.dedent("""
+    [pytest]
+    env_files =
+        .env.local
+        .env.prod
+
+    addopts = -v -s
+    """)[1:]
