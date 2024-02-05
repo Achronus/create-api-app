@@ -32,7 +32,10 @@ class AssetFilenames:
     REQUIREMENTS = 'requirements.txt'
     POETRY_CONF = 'pyproject.toml'
     README = 'README.md'
-    ENV = '.env'
+    
+    LOCAL_ENV = '.env.local'
+    PROD_ENV = '.env.prod'
+
     MAIN = 'main.py'
     BUILD = 'build.py'
 
@@ -57,17 +60,37 @@ class StaticDirNames:
 # Setup assets filepaths
 class SetupDirPaths:
     ROOT = os.path.dirname(os.path.join(os.getcwd(), SetupAssetsDirNames.ROOT))
-    SETUP_ROOT = os.path.join(ROOT, 'fastapi_quickstart')
+    SETUP_ROOT = os.path.join(ROOT, 'create_api_app')
     ASSETS = os.path.join(SETUP_ROOT, SetupAssetsDirNames.ROOT)
     PROJECT_NAME = os.path.join(SETUP_ROOT, 'conf', 'name')
 
 
-def set_project_name(name: str) -> str:
-    os.environ['PROJECT_NAME'] = name
+def __dotenv_setter(name: str, value: str) -> None:
+    os.environ[name] = value
+
+
+def set_project_name(name: str) -> None:
+    __dotenv_setter('PROJECT_NAME', name)
+
+
+def set_db_url(url: str) -> None:
+    __dotenv_setter('DATABASE_URL', url)
+
+
+def set_poetry_version(version: str) -> None:
+    __dotenv_setter('POETRY_VERSION', version)
 
 
 def get_project_name() -> str:
     return os.environ.get('PROJECT_NAME')
+
+
+def get_db_url() -> str:
+    return os.environ.get('DATABASE_URL')
+
+
+def get_poetry_version() -> str:
+    return os.environ.get('POETRY_VERSION')
 
 
 # Project directory and filename filepaths

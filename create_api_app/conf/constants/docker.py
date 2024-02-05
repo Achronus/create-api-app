@@ -1,12 +1,11 @@
 import textwrap
 
-from .filepaths import get_project_name, DockerPaths
+from .filepaths import get_project_name, get_poetry_version, DockerPaths
 
 
 class DockerEnvConfig:
     def __init__(self) -> None:
-        import importlib.metadata
-        self.poetry_version = importlib.metadata.version('poetry')
+        self.poetry_version = get_poetry_version()
         self.project_name = get_project_name()
 
         # Docker-compose

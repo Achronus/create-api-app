@@ -1,12 +1,13 @@
+import re
 import os
 import shutil
 import subprocess
+import sys
 
-from ..conf.constants import VENV, VENV_NAME, CORE_PIP_PACKAGES
-from ..conf.constants.filepaths import get_project_name
+from ..conf.constants import VENV_NAME, CORE_BACKEND_PACKAGES, BACKEND_DEV_PACKAGES
+from ..conf.constants.filepaths import get_project_name, set_poetry_version
 from ..conf.constants.poetry import PoetryContent
 from ..conf.file_handler import insert_into_file
-from ..config import BACKEND_ADDITIONAL_PACKAGES, BACKEND_DEV_PACKAGES
 from .base import ControllerBase
 
 
@@ -24,21 +25,25 @@ class VEnvController(ControllerBase):
         super().__init__(tasks)
 
         self.poetry_content = PoetryContent()
+        VENV_LOCATION = os.path.join(os.getcwd(), VENV_NAME)
+
+        if sys.platform.startswith("win"):
+            self.venv = f"{VENV_LOCATION}\\Scripts"
+        else:
+            self.venv = f"source {VENV_LOCATION}/bin/"
 
     @staticmethod
     def create() -> None:
         """Creates a new virtual environment."""
         subprocess.run(["python", "-m", "venv", VENV_NAME], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    @staticmethod
-    def update_pip() -> None:
+    def update_pip(self) -> None:
         """Updates `PIP` to the latest version."""
-        subprocess.run([os.path.join(VENV, "pip"), "install", "--upgrade", "pip"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run([os.path.join(self.venv, "pip"), "install", "--upgrade", "pip"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    @staticmethod
-    def install() -> None:
+    def install(self) -> None:
         """Installs a set of `PIP` packages."""
-        subprocess.run([os.path.join(VENV, "pip"), "install", "poetry", *CORE_PIP_PACKAGES, *BACKEND_ADDITIONAL_PACKAGES], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run([os.path.join(self.venv, "pip"), "install", "poetry", *CORE_BACKEND_PACKAGES], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     def init_project(self) -> None:
         """Creates a poetry project."""
@@ -61,9 +66,13 @@ class VEnvController(ControllerBase):
         """Adds PIP packages to the poetry project."""
         subprocess.run(["poetry", "shell"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        subprocess.run(["poetry", "add", *CORE_PIP_PACKAGES, *BACKEND_ADDITIONAL_PACKAGES], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["poetry", "add", *CORE_BACKEND_PACKAGES], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         subprocess.run(["poetry", "add", *BACKEND_DEV_PACKAGES, '--dev'], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Store poetry version
+        pv_result = subprocess.run(["poetry", "--version"], capture_output=True, text=True)
+        set_poetry_version(re.search(r'\d+\.\d+\.\d+', pv_result.stdout).group(0))
 
         # Move into project directory
         os.chdir(self.project_paths.PROJECT)

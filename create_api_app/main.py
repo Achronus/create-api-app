@@ -2,7 +2,7 @@ import os
 import shutil
 
 
-from .conf.constants.filepaths import set_project_name
+from .conf.constants.filepaths import set_project_name, set_db_url
 from .conf.helper import set_tw_standalone_filename
 from .setup import run_tasks
 from .utils.helper import strip_whitespace_and_dashes
@@ -19,13 +19,17 @@ console = Console()
 
 
 @app.command()
-def main(name: Annotated[str, typer.Argument(help="The name of the project", show_default=False)]) -> None:
-    """Create a FastAPI project with NAME."""
+def main(
+        name: Annotated[str, typer.Argument(help="The name of the project", show_default=False)], 
+        db_url: Annotated[str, typer.Argument(help="The projects database URL", show_default=True, metavar="DB_URL", rich_help_panel="Secondary Arguments")] = 'sqlite:///./database.db'
+    ) -> None:
+    """Create a FastAPI and NextJS project with NAME and an optional DB_URL."""
     name = strip_whitespace_and_dashes(name)
-    path = os.path.join(os.path.dirname(os.getcwd()), name)
+    path = os.path.join(os.getcwd(), name)
 
-    # Store name as temporary env variable
+    # Store arguments as env variables
     set_project_name(name)
+    set_db_url(db_url)
 
     # Provide pretty print formats
     name_print = f'[cyan]{name}[/cyan]'
