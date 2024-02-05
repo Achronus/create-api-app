@@ -159,7 +159,7 @@ class DockerContent:
         version: '1'
 
         services:
-        backend:
+          backend:
             container_name: backend
             build:
               context: .
