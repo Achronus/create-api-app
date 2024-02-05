@@ -5,7 +5,7 @@ from .filepaths import ProjectPaths
 
 # FastAPI directory and filenames names
 class FastAPIDirnames:
-    DATABASE = 'database'
+    DATABASE = 'db'
 
 
 class FastAPIFilenames:

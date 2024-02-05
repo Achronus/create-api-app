@@ -50,6 +50,34 @@ class DockerContent:
         HOST={self.dotenv_config.host}
         """)
     
+    def dockerignore(self) -> str:
+        return self.__format("""
+        # Git
+        **.git
+        *.gitignore
+
+        # Python
+        **/__pycache__
+
+        # Docker
+        /config**/docker
+        *docker-compose.yml
+        *.dockerignore
+
+        # Tailwind
+        **tailwindcss
+        **tailwindcss.exe
+        **tailwind.config.js
+
+        # Project
+        **/data
+
+        # Dev
+        **/tests
+        *pytest.ini
+        **/.pytest_cache
+        """)
+
     def backend_df(self) -> str:
         """The content for the backend Dockerfile."""
         start = f"""
@@ -59,27 +87,21 @@ class DockerContent:
         """
 
         return self.__format(start + """
-
         ########################################
-        # --- Base Stage ---
+        # --- Base ---
         ########################################
-        FROM python:${BUILD_VERSION}-slim as base
+        FROM python:${BUILD_VERSION}-alpine as base
 
         ARG PROJECT_NAME
         ENV PROJECT_NAME=${PROJECT_NAME}
-
-        # install system dependencies
-        RUN apt-get update && \\
-            apt-get install -y gcc && \\
-            rm -rf /var/lib/apt/lists/*
 
         # Set working directory
         WORKDIR /$PROJECT_NAME
 
         ########################################
-        # --- Development Stage ---
+        # --- Builder Stage ---
         ########################################
-        FROM base as development
+        FROM base as builder
 
         ARG POETRY_VERSION
 
@@ -87,51 +109,57 @@ class DockerContent:
         ENV PYTHONFAULTHANDLER=1 \\
             PYTHONUNBUFFERED=1 \\
             PYTHONHASHSEED=random \\
+            # PIP config
             PIP_NO_CACHE_DIR=off \\
             PIP_DISABLE_PIP_VERSION_CHECK=on \\
             PIP_DEFAULT_TIMEOUT=100 \\
-            POETRY_VIRTUALENVS_CREATE=false \\
-            POETRY_NO_INTERACTION=1 \\
+            # Poetry config
             POETRY_VERSION=${POETRY_VERSION}
 
-        # Install poetry
-        RUN pip install --upgrade pip "poetry==$POETRY_VERSION"
-
-        # Copy requirements and install dependencies
-        COPY poetry.lock pyproject.toml ./
-        RUN poetry install --no-dev --no-root
-
-        ########################################
-        # --- Builder Stage ---
-        ########################################
-        FROM development as builder
-
-        # Copy project files
+        # Copy project and poetry files
         COPY . .
 
-        # Install and build poetry
-        RUN poetry build --format wheel
+        # install system dependencies, update pip, install poetry, its packages, and cleanup
+        RUN apk update && \\
+            apk add --no-cache --virtual .build-deps build-base && \\
+            pip install --upgrade pip "poetry==$POETRY_VERSION" && \\
+            poetry config virtualenvs.create false && \\
+            poetry install --only main && \\
+            apk del .build-deps
 
         ########################################
-        # --- Production Stage ---
+        # --- Runtime Stage ---
         ########################################
-        FROM base as production
+        FROM base as runtime
 
-        # Copy the built wheel file from the builder stage
-        COPY --from=builder /$PROJECT_NAME/dist/*.whl ./
+        ARG PYTHON_VERSION && \\
+            PORT
 
-        # Install the wheel and then remove it
-        RUN pip install ./*.whl && \\
-            rm ./*.whl
+        ENV PROJECT_NAME=${PROJECT_NAME} \\
+            PACKAGE_DIR=/usr/local/lib/python${PYTHON_VERSION}/site-packages \\
+            PORT=${PORT}
+
+        # Copy files from builder
+        COPY --from=builder $PROJECT_NAME .
+        COPY --from=builder $PACKAGE_DIR $PACKAGE_DIR
+
+        # Expose port
+        EXPOSE $PORT
         """)
 
     def compose_main(self) -> str:
         """The content for the main (entry point) Docker Compose file."""
         return self.__format("""
+        # Run command:
+        # docker-compose --env-file .env.prod up -d --build
+
+        # Exit command:
+        # docker-compose --env-file .env.prod down
+
         version: '1'
 
         services:
-          backend:
+        backend:
             container_name: backend
             build:
               context: .
@@ -139,14 +167,13 @@ class DockerContent:
               args:
                 POETRY_VERSION: ${POETRY_VERSION}
                 PROJECT_NAME: ${PROJECT_NAME}
+                PORT: ${PORT}
             ports:
             - "${PORTS}"
             volumes:
             - .:/${PROJECT_NAME}
-            env_file:
-            - .env
             # entrypoint: ['sleep', 'infinity']
-            entrypoint: ["run"]
+            entrypoint: ["python", "-m", "${PROJECT_NAME}.build"]
         """)
 
 
@@ -164,5 +191,6 @@ class DockerFileMapper:
     def compose_files(self) -> list[tuple[str, str]]:
         """Maps the pairs of filepaths and content for Docker compose files."""
         return [
-            (self.paths.COMPOSE_MAIN, self.content.compose_main())
+            (self.paths.COMPOSE_MAIN, self.content.compose_main()),
+            (self.paths.IGNORE, self.content.dockerignore())
         ]
