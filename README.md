@@ -109,7 +109,7 @@ With everything setup, enter the `<project_name>` directory and start the `dev` 
 
 ```bash
 cd `<file_path>/<project_name>`  # Navigate to the project directory...
-docker-compose up -d --build
+docker-compose --env-file .env.prod up -d --build
 ```
 
 Then access the site at [localhost:8080](http://localhost:8080).
@@ -121,7 +121,7 @@ When moving to production, simply update the `ENV_TYPE` variable in `<project_na
 You can then use the same docker-compose command to run the production environment.
 
 ```bash
-docker-compose up -d --build
+docker-compose --env-file .env.prod up -d --build
 ```
 
 ### Folder Structure
