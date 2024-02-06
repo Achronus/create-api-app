@@ -3,7 +3,6 @@ import subprocess
 
 from .base import ControllerBase
 from ..conf.constants import NPM_PACKAGES
-from ..conf.constants.nextjs import NextJSContent
 
 
 class NextJSController(ControllerBase):
@@ -15,7 +14,6 @@ class NextJSController(ControllerBase):
 
         super().__init__(tasks)
 
-        self.content = NextJSContent()
 
     def update_npm(self) -> None:
         """Adds the remaining required packages to the `package.json`."""

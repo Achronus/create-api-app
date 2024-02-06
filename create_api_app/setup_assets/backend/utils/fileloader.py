@@ -8,19 +8,14 @@ class DirPaths:
     ROOT: str
     FRONTEND: str
     BACKEND: str
-    STATIC: str
-    TEMPLATES: str
-    CSS: str
-    JS: str
-    IMGS: str
+    PUBLIC: str
+    STYLES: str
 
 
 @dataclass
 class FilePaths:
     ENV_PROD: str
     ENV_LOCAL: str
-    INPUT_CSS: str
-    OUTPUT_CSS: str
 
 
 class FileLoader:
@@ -32,18 +27,13 @@ class FileLoader:
             'frontend', 
             'backend', 
             'public',
-            'templates',
-            'css', 
-            'js', 
-            'imgs'
+            'styles'
             ], self.is_dir)
         )
         self.FILEPATHS = FilePaths(
             *self.finder([
                 '.env.prod',
-                '.env.local',
-                'input.css',
-                'styles.min.css'
+                '.env.local'
             ], self.is_file)
         )
 
