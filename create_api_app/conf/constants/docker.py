@@ -96,7 +96,7 @@ class DockerContent:
         ENV PROJECT_NAME=${PROJECT_NAME}
 
         # Set working directory
-        WORKDIR /$PROJECT_NAME
+        WORKDIR /app
 
         ########################################
         # --- Builder Stage ---
@@ -117,7 +117,7 @@ class DockerContent:
             POETRY_VERSION=${POETRY_VERSION}
 
         # Copy project and poetry files
-        COPY . .
+        COPY . /app/
 
         # install system dependencies, update pip, install poetry, its packages, and cleanup
         RUN apk update && \\
@@ -140,7 +140,7 @@ class DockerContent:
             PORT=${PORT}
 
         # Copy files from builder
-        COPY --from=builder $PROJECT_NAME .
+        COPY --from=builder /app /app/
         COPY --from=builder $PACKAGE_DIR $PACKAGE_DIR
 
         # Expose port
