@@ -1,6 +1,6 @@
 from .venv import VEnvController
 from .static import StaticAssetsController
-from .libraries import LibraryController
+from .nextjs import NextJSController
 from .fastapi import FastAPIFileController
 from .docker import DockerFileController
 from .clean import CleanupController
@@ -12,9 +12,9 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 
 TASKS = [
     (VEnvController, "Creating virtual environment..."),
-    (StaticAssetsController, "Creating [cyan]static[/cyan] assets..."),
+    (StaticAssetsController, "Creating [cyan]core[/cyan] assets..."),
     (FastAPIFileController, "Checking [cyan]backend[/cyan] assets..."),
-    (LibraryController, "Installing [cyan]frontend[/cyan] libraries..."),
+    (NextJSController, "Creating [cyan]frontend[/cyan] assets..."),
     (DockerFileController, "Creating [cyan]Dockerfiles[/cyan]..."),
     (CleanupController, "Cleaning project...")
 ]

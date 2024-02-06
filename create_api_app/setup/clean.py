@@ -2,7 +2,6 @@ import os
 import shutil
 import subprocess
 
-from ..conf.helper import tw_executable_exists
 from ..conf.constants import VENV_NAME
 from .base import ControllerBase
 
@@ -20,10 +19,10 @@ class CleanupController(ControllerBase):
         super().__init__(tasks)
     
     def node_modules(self) -> None:
-        """Removes the `node_modules` folder if `tailwindcss` does not exist."""
+        """Removes the `node_modules` folder from frontend (if exists)."""
         # If exists, remove node_modules
-        if tw_executable_exists(self.project_paths.ROOT):
-            shutil.rmtree(os.path.join(self.project_paths.ROOT, 'node_modules'))
+        if (os.path.join(self.project_paths.FRONTEND, 'node_modules')):
+            shutil.rmtree(os.path.join(self.project_paths.FRONTEND, 'node_modules'))
 
     def poetry_install(self) -> None:
         """Finalise the application with a poetry install."""
@@ -35,9 +34,5 @@ class CleanupController(ControllerBase):
         shutil.rmtree(os.path.join(os.path.dirname(self.project_paths.ROOT), VENV_NAME))
 
     def remove_files(self) -> None:
-        """Removes redundant files."""
-        os.remove(os.path.join(self.project_paths.ROOT, '__init__.py'))
-        os.remove(os.path.join(self.project_paths.ROOT, 'package.json'))
-        os.remove(os.path.join(self.project_paths.ROOT, 'package-lock.json'))
-        
+        """Removes extra redundant files."""
         shutil.rmtree(os.path.join(self.project_paths.ROOT, 'tests'))

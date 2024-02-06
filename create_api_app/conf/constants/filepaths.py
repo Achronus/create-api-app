@@ -116,6 +116,7 @@ class ProjectPaths:
 
         self.BACKEND_TESTS = os.path.join(self.BACKEND, 'tests')
         self.PYTEST_INI = os.path.join(os.path.dirname(self.ROOT), 'pytest.ini')
+        self.PACKAGE_JSON = os.path.join(self.FRONTEND, 'package.json')
 
 
 # Dockerfile specific directory and filename filepaths

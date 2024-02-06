@@ -15,7 +15,7 @@ class StaticAssetsController(ControllerBase):
     """A controller for handling the static assets."""
     def __init__(self) -> None:
         tasks = [
-            (self.move_setup_assets, "Creating [green]static files[/green] and [green]templates[/green]"),
+            (self.move_setup_assets, "Setting up core [green]frontend[/green] and [green]backend[/green] files"),
             (self.create_dotenv, "Building [magenta].env[/magenta] files")
         ]
 
@@ -37,11 +37,4 @@ class StaticAssetsController(ControllerBase):
 
     def move_setup_assets(self) -> None:
         """Moves the items in the `setup_assets` folder into the project directory."""
-        # Move assets into root project dir
         shutil.copytree(SetupDirPaths.ASSETS, os.getcwd(), dirs_exist_ok=True)
-
-        # Move .gitignore, if available
-        gitignore_path = os.path.join(os.getcwd(), '.gitignore')
-        if gitignore_path:
-            shutil.copy(gitignore_path, os.path.dirname(os.getcwd()))
-            os.remove(gitignore_path)

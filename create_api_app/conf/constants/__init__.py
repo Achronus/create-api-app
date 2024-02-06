@@ -19,9 +19,15 @@ BACKEND_DEV_PACKAGES = [
 
 # Define core NPM packages to install
 NPM_PACKAGES = [
-    "tailwindcss", 
+    "tailwind-merge",
+    "tailwindcss-animate", 
     "flowbite", 
-    "alpinejs"
+    "next-themes",  # Shadcn/ui
+    "uploadthing",
+    "@uploadthing/react",
+    "@clerk/nextjs",
+    "@clerk/themes",
+    "zod"
 ]
 
 # Custom print emoji's
