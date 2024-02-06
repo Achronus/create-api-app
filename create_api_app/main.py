@@ -3,7 +3,6 @@ import shutil
 
 
 from .conf.constants.filepaths import set_project_name, set_db_url
-from .conf.helper import set_tw_standalone_filename
 from .setup import run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
@@ -57,9 +56,6 @@ def main(
     console.print(project_complete_panel())
     console.print(f"Access {name_print} at {path_print}")
 
-    # Provide information for unsupported TailwindCSS standalone CLI
-    if set_tw_standalone_filename() == 'unsupported':
-        console.print('\nOS not supported for standalone TailwindCSS. [magenta]node_modules[/magenta] kept.')
 
 if __name__ == '__main__':
     app()

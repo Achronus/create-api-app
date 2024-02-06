@@ -1,7 +1,6 @@
 import os
 
 from . import STATIC_DIR_NAME
-from ..helper import set_tw_standalone_filename
 
 
 # Setup assets directory names
@@ -20,15 +19,6 @@ class SetupAssetsDirNames:
 
 # Asset filenames
 class AssetFilenames:
-    _js_ext = '.min.js'
-    _css_ext = '.min.css'
-
-    TW_STANDALONE = set_tw_standalone_filename()
-    ALPINE = 'alpine' + _js_ext
-    HTMX = 'htmx' + _js_ext
-    FLOWBITE_CSS = 'flowbite' + _css_ext
-    FLOWBITE_JS = 'flowbite' + _js_ext
-
     REQUIREMENTS = 'requirements.txt'
     POETRY_CONF = 'pyproject.toml'
     README = 'README.md'
@@ -38,15 +28,6 @@ class AssetFilenames:
 
     MAIN = 'main.py'
     BUILD = 'build.py'
-
-
-# Asset URLs
-class AssetUrls:
-    TW_STANDALONE = 'https://github.com/tailwindlabs/tailwindcss/releases/latest/download/'
-    ALPINE = 'node_modules/alpinejs/dist/cdn.min.js'
-    HTMX = f'https://unpkg.com/htmx.org/dist/{AssetFilenames.HTMX}'
-    FLOWBITE_CSS = f'node_modules/flowbite/dist/{AssetFilenames.FLOWBITE_CSS}'
-    FLOWBITE_JS = f'node_modules/flowbite/dist/{AssetFilenames.FLOWBITE_JS}'
 
 
 # Static folder directory names

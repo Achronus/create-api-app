@@ -14,7 +14,7 @@ TASKS = [
     (VEnvController, "Creating virtual environment..."),
     (StaticAssetsController, "Creating [cyan]core[/cyan] assets..."),
     (FastAPIFileController, "Checking [cyan]backend[/cyan] assets..."),
-    (NextJSController, "Creating [cyan]frontend[/cyan] assets..."),
+    (NextJSController, "Checking [cyan]frontend[/cyan] assets..."),
     (DockerFileController, "Creating [cyan]Dockerfiles[/cyan]..."),
     (CleanupController, "Cleaning project...")
 ]
