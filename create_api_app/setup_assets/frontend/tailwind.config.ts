@@ -1,10 +1,14 @@
 import type { Config } from "tailwindcss";
+import { withUt } from 'uploadthing/tw';
 
-const config: Config = {
+const config: Config = withUt({
+  darkMode: ['class'],
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+    './node_modules/@tremor/**/*.{js,ts,jsx,tsx}', // Tremor module
   ],
   theme: {
     extend: {
@@ -14,7 +18,8 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
-  },
-  plugins: [],
-};
+    plugins: [require('tailwindcss-animate')],
+  }
+) satisfies Config
+
 export default config;
