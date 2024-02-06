@@ -18,7 +18,7 @@ The project stack contains three main elements:
 
 - [FastAPI](https://github.com/tiangolo/fastapi)
 - [NextJS](https://nextjs.org/)
-- [TailwindCSS](https://tailwindcss.com/)
+- [TailwindCSS](https://tailwindcss.com/) & [Flowbite](https://flowbite.com/)
 
 _Note: all libraries and packages are automatically installed to their latest versions when running the tool._
 
