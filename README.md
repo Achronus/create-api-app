@@ -103,7 +103,7 @@ In your terminal, you should get feedback from the container stating the progres
 
 _❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean up the container and its images, removing them after the project is successfully built._
 
-### Starting A Project
+## Starting A Created Project
 
 With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
 
@@ -113,6 +113,18 @@ docker-compose --env-file .env.prod up -d --build
 ```
 
 Then access the site at [localhost:8080](http://localhost:8080).
+
+### Development Testing
+
+Testing from a docker container is a little complicated, so instead we advise performing standard testing procedures from your local machine. 
+
+With the `backend`, we can use a `poetry shell` to run our unit tests with `pytest`. Simply, access a shell, install the packages and run `pytest` like normal.
+
+```bash
+poetry shell
+poetry install
+pytest
+```
 
 ### Moving To Production
 
