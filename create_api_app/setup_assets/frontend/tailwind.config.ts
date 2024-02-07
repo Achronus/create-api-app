@@ -20,6 +20,6 @@ const config: Config = withUt({
     },
     plugins: [require('tailwindcss-animate')],
   }
-) satisfies Config
+}) satisfies Config;
 
 export default config;
