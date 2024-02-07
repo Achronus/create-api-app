@@ -4,7 +4,7 @@ import pytest
 
 class TestLocalDotEnv:
     def test_backend_path_valid(self, conf) -> None:
-        path = os.path.join(os.getcwd(), '<REPLACE>', 'backend', '.env.local')
+        path = os.path.join(os.getcwd(), 'app', 'backend', '.env.local')
         assert conf.FILEPATHS.ENV_LOCAL == path, f'Invalid: {conf.FILEPATHS.ENV_LOCAL}'
 
     def test_data_valid(self, conf) -> None:
@@ -22,7 +22,7 @@ class TestProdDotEnv:
 
 class TestConf:
     def test_data_valid(self, conf) -> None:
-        assert conf.PROJECT_NAME == '<REPLACE>'
+        assert conf.PROJECT_NAME == 'app'
 
 
     def test_data_invalid(self, conf) -> None:

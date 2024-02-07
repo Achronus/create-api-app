@@ -22,7 +22,7 @@ class PoetryContent:
         self.BUILD_FILE_CONTENT = f"""
         import os
 
-        from .app.config.settings import settings
+        from app.config.settings import settings
 
         import uvicorn
 

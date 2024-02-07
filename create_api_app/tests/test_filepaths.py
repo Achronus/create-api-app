@@ -16,11 +16,10 @@ PROJECT_NAME = 'test_project'
 set_project_name(PROJECT_NAME)
 CUSTOM_PROJECT_PARENT = get_project_name()
 CUSTOM_PROJECT_ROOT = os.path.join(CUSTOM_PROJECT_PARENT)
+CUSTOM_PROJECT_BACKEND = os.path.join(CUSTOM_PROJECT_PARENT, 'backend')
 CUSTOM_PROJECT_STATIC = os.path.join(CUSTOM_PROJECT_ROOT, 'frontend', STATIC_DIR_NAME)
 
-SETUP_ROOT = 'create-api-app'
-SETUP_PROJECT_ROOT = os.path.join(SETUP_ROOT, 'create_api_app')
-STATIC = os.path.join(SETUP_PROJECT_ROOT, STATIC_DIR_NAME)
+SETUP_ROOT = 'create_api_app'
 
 
 @pytest.fixture
@@ -70,43 +69,13 @@ class TestProjectPaths:
     def test_poetry_conf_valid(self) -> None:
         self.__validate_path(
             self.project_paths.POETRY_CONF, 
-            os.path.join(CUSTOM_PROJECT_PARENT, AssetFilenames.POETRY_CONF)
-        )
-
-    def test_project_main_valid(self) -> None:
-        self.__validate_path(
-            self.project_paths.PROJECT_MAIN, 
-            os.path.join(CUSTOM_PROJECT_ROOT, AssetFilenames.MAIN)
+            os.path.join(CUSTOM_PROJECT_BACKEND, AssetFilenames.POETRY_CONF)
         )
 
     def test_project_build_valid(self) -> None:
         self.__validate_path(
-            self.project_paths.PROJECT_BUILD, 
-            os.path.join(CUSTOM_PROJECT_ROOT, AssetFilenames.BUILD)
-        )
-
-    def test_static_valid(self) -> None:
-        self.__validate_path(
-            self.project_paths.STATIC,
-            CUSTOM_PROJECT_STATIC 
-        )
-
-    def test_static_css_valid(self) -> None:
-        self.__validate_path(
-            self.project_paths.CSS, 
-            os.path.join(CUSTOM_PROJECT_STATIC, SetupAssetsDirNames.CSS)
-        )
-
-    def test_static_js_valid(self) -> None:
-        self.__validate_path(
-            self.project_paths.JS, 
-            os.path.join(CUSTOM_PROJECT_STATIC, SetupAssetsDirNames.JS)
-        )
-
-    def test_static_imgs_valid(self) -> None:
-        self.__validate_path(
-            self.project_paths.IMGS, 
-            os.path.join(CUSTOM_PROJECT_STATIC, SetupAssetsDirNames.IMGS)
+            self.project_paths.BACKEND_BUILD, 
+            os.path.join(CUSTOM_PROJECT_BACKEND, AssetFilenames.BUILD)
         )
 
 
@@ -123,17 +92,11 @@ class TestSetupDirPaths:
     def test_setup_root_valid(self) -> None:
         self.__validate_path(
             SetupDirPaths.SETUP_ROOT, 
-            SETUP_PROJECT_ROOT
+            SETUP_ROOT
         )
 
     def test_assets_valid(self) -> None:
         self.__validate_path(
             SetupDirPaths.ASSETS, 
-            os.path.join(SETUP_PROJECT_ROOT, SetupAssetsDirNames.ROOT)
-        )
-
-    def test_project_name_valid(self) -> None:
-        self.__validate_path(
-            SetupDirPaths.PROJECT_NAME, 
-            os.path.join(SETUP_PROJECT_ROOT, 'conf', 'name')
+            os.path.join(SETUP_ROOT, SetupAssetsDirNames.ROOT)
         )

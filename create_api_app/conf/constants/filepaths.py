@@ -34,7 +34,6 @@ class SetupDirPaths:
     ROOT = os.path.dirname(os.path.join(os.getcwd(), SetupAssetsDirNames.ROOT))
     SETUP_ROOT = os.path.join(ROOT, 'create_api_app')
     ASSETS = os.path.join(SETUP_ROOT, SetupAssetsDirNames.ROOT)
-    PROJECT_NAME = os.path.join(SETUP_ROOT, 'conf', 'name')
 
 
 def __dotenv_setter(name: str, value: str) -> None:

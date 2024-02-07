@@ -6,10 +6,8 @@ import os
 @dataclass
 class DirPaths:
     ROOT: str
-    FRONTEND: str
     BACKEND: str
     PUBLIC: str
-    STYLES: str
 
 
 @dataclass
@@ -24,10 +22,8 @@ class FileLoader:
         self.DIRPATHS = DirPaths(
             os.getcwd(), 
             *self.finder([
-            'frontend', 
             'backend', 
             'public',
-            'styles'
             ], self.is_dir)
         )
         self.FILEPATHS = FilePaths(
