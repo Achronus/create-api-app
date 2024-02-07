@@ -165,7 +165,7 @@ class DockerContent:
         return self.__format(f"""
         # Dockerfile for NextJS
         # https://hub.docker.com/r/oven/bun/tags
-        ARG BUILD_VERSION=${self.config.bun_version}
+        ARG BUILD_VERSION={self.config.bun_version}
 
         ########################################
         # --- Base ---
