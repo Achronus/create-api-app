@@ -37,7 +37,11 @@ class StaticAssetsController(ControllerBase):
             file.write(docker_content.env_config())
 
         with open(backend_path, "w") as file:
-            file.write(f'DATABASE_URL={get_db_url()}')
+            file.write(
+                f'DATABASE_URL={get_db_url()}\n' + 
+                '# DATABASE_URL=postgresql://<username>:<password>@postgresserver/db\n' +
+                '# DATABASE_URL=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority'
+            )
 
         # Update frontend .env.example -> .env.local
         frontend_env = os.path.join(self.project_paths.FRONTEND, '.env.example')
