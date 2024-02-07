@@ -117,7 +117,7 @@ class DockerContent:
             POETRY_VERSION=${POETRY_VERSION}
 
         # Copy project and poetry files
-        COPY . /app/
+        COPY /backend .env.prod /app/
 
         # install system dependencies, update pip, install poetry, its packages, and cleanup
         RUN apk update && \\
@@ -173,7 +173,7 @@ class DockerContent:
             volumes:
             - .:/${PROJECT_NAME}
             # entrypoint: ['sleep', 'infinity']
-            entrypoint: ["python", "-m", "${PROJECT_NAME}.build"]
+            entrypoint: ["python", "-m", "build"]
         """)
 
 

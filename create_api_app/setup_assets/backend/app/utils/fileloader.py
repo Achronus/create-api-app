@@ -6,7 +6,7 @@ import os
 @dataclass
 class DirPaths:
     ROOT: str
-    BACKEND: str
+    APP: str
     PUBLIC: str
 
 
@@ -19,18 +19,18 @@ class FilePaths:
 class FileLoader:
     """A class for loading files."""
     def __init__(self) -> None:
+        ROOT = os.getcwd()
+        APP = os.path.join(ROOT, 'app')
+        PUBLIC = os.path.join(APP, 'public')
+
         self.DIRPATHS = DirPaths(
-            os.getcwd(), 
-            *self.finder([
-            'backend', 
-            'public',
-            ], self.is_dir)
+            ROOT=ROOT,
+            APP=APP,
+            PUBLIC=PUBLIC
         )
         self.FILEPATHS = FilePaths(
-            *self.finder([
-                '.env.prod',
-                '.env.local'
-            ], self.is_file)
+            '.env.prod',
+            '.env.local'
         )
 
         self.local_dotenv()
