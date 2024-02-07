@@ -111,7 +111,7 @@ With everything setup, enter the `<project_name>` directory and start the `dev` 
 
 ```bash
 cd <file_path>/<project_name>  # Navigate to the project directory...
-docker-compose -d --build
+docker-compose up -d --build
 ```
 
 Then access the backend at [localhost:8080](http://localhost:8080) and frontend at [localhost:3000](http://localhost:3000).
@@ -136,7 +136,7 @@ When moving to production, update the `ENV_TYPE` variable in `<project_name>/.en
 Then use the docker-compose command with the production file to run the production environment.
 
 ```bash
-docker-compose -f docker-compose.prod.yml -d --build
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 ### Folder Structure
