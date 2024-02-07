@@ -142,43 +142,49 @@ The newly created project should look similar to the following:
 
 ```bash
 <project_name>
-└── config
-|   └── docker
-|   |   └── Dockerfile.backend
-|   |   └── Dockerfile.frontend
-└── <project_name>
-|   └── backend
+└── backend  # FastAPI
+|   └── app
 |   |   └── config
-|   |   |   └── __init__.py
-|   |   |   └── settings.py
+|   |   |   └── ...
 |   |   └── db
 |   |   |   └── ...
 |   |   └── routers
 |   |   |   └── ...
-|   |   └── tests
-|   |   |   └── ...
 |   |   └── utils
-|   |   |   └── __init__.py
-|   |   |   └── fileloader.py
+|   |   |   └── ...
 |   |   └── __init__.py
-|   |   └── .env.local
+|   |   └── dependencies.py
 |   |   └── main.py
-|   └── frontend
-|   |   └── node_modules
-|   |   |   └── ...
-|   |   └── public
-|   |   |   └── ...
-|   |   └── src
-|   |   |   └── ...
-|   └── __init__.py
+|   └── tests
+|   |   └── ...
+|   └── .env.local
+|   └── .gitignore
 |   └── build.py
+|   └── poetry.lock
+|   └── pyproject.toml
+|   └── pytest.ini
+|   └── README.md
+└── frontend  # NextJS
+|   └── public
+|   |   └── ...
+|   └── src
+|   |   └── app
+|   |   |   └── ...
+|   |   └── middleware.ts
+|   └── .env.example
+|   └── .eslintrc.json
+|   └── .gitignore
+|   └── bun.lockb
+|   └── next.config.mjs
+|   └── next-env.d.ts
+|   └── package.json
+|   └── postcss.config.js
+|   └── README.md
+|   └── tailwind.config.ts
+|   └── tsconfig.json
 └── .dockerignore
 └── .env.prod
-└── .gitignore
-└── database.db  # SQLite only!
 └── docker-compose.yml
-└── poetry.lock
-└── pyproject.toml
-└── pytest.ini
-└── README.md
+└── Dockerfile.backend
+└── Dockerfile.frontend
 ```
