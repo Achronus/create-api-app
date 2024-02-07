@@ -133,7 +133,7 @@ pytest
 
 When moving to production, update the `ENV_TYPE` variable in `<project_name>/.env` from `dev` -> `prod`!
 
-Then use the docker-compose command with the production file to run the production environment.
+Then test it works with the production docker-compose file:
 
 ```bash
 docker-compose -f docker-compose.prod.yml up -d --build
