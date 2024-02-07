@@ -157,6 +157,7 @@ The newly created project should look similar to the following:
 |   |   └── main.py
 |   └── tests
 |   |   └── ...
+|   └── __init__.py
 |   └── .env.local
 |   └── .gitignore
 |   └── build.py
