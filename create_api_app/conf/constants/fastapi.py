@@ -30,8 +30,8 @@ class FastAPIContent:
     PYTEST_INI = textwrap.dedent("""
     [pytest]
     env_files =
-        backend/.env.local
-        .env.prod
+        .env.local
+        .env
 
     addopts = -v -s
     """)[1:]

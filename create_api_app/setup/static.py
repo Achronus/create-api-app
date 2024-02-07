@@ -39,6 +39,10 @@ class StaticAssetsController(ControllerBase):
         with open(backend_path, "w") as file:
             file.write(f'DATABASE_URL={get_db_url()}')
 
+        # Update frontend .env.example -> .env.local
+        frontend_env = os.path.join(self.project_paths.FRONTEND, '.env.example')
+        os.rename(frontend_env, os.path.join(self.project_paths.FRONTEND, '.env.local'))
+
     def move_setup_assets(self) -> None:
         """Moves the items in the `setup_assets` folder into the project directory."""
         shutil.copytree(SetupDirPaths.ASSETS, os.getcwd(), dirs_exist_ok=True)
