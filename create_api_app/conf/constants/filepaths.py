@@ -8,13 +8,7 @@ class SetupAssetsDirNames:
     ROOT = 'setup_assets'
     FRONTEND = 'frontend'
     BACKEND = 'backend'
-
-    CSS = 'css'
-    JS = 'js'
-    IMGS = 'imgs'
-
-    CONFIG = 'config'
-    DOCKERFILES = 'docker'
+    APP = 'app'
 
 
 # Asset filenames
@@ -33,9 +27,6 @@ class AssetFilenames:
 # Static folder directory names
 class StaticDirNames:
     ROOT = os.path.join(os.getcwd(), STATIC_DIR_NAME, SetupAssetsDirNames.FRONTEND)
-    CSS = os.path.join(ROOT, SetupAssetsDirNames.CSS)
-    JS = os.path.join(ROOT, SetupAssetsDirNames.JS)
-    IMGS = os.path.join(ROOT, SetupAssetsDirNames.IMGS)
 
 
 # Setup assets filepaths
@@ -80,23 +71,20 @@ class ProjectPaths:
         self.PROJECT_NAME = get_project_name()
         self.ROOT = os.path.join(os.path.dirname(os.getcwd()), self.PROJECT_NAME)
         self.BACKEND = os.path.join(self.ROOT, SetupAssetsDirNames.BACKEND)
+        self.BACKEND_APP = os.path.join(self.BACKEND, SetupAssetsDirNames.APP)
         self.FRONTEND = os.path.join(self.ROOT, SetupAssetsDirNames.FRONTEND)
 
         self.PROJECT = os.path.join(self.ROOT, self.PROJECT_NAME)
         self.INIT_POETRY_CONF = os.path.join(self.PROJECT, AssetFilenames.POETRY_CONF)
         self.INIT_README = os.path.join(self.PROJECT, AssetFilenames.README)
         
-        self.POETRY_CONF = os.path.join(self.ROOT, AssetFilenames.POETRY_CONF)
-        self.PROJECT_MAIN = os.path.join(self.ROOT, AssetFilenames.MAIN)
-        self.PROJECT_BUILD = os.path.join(self.ROOT, AssetFilenames.BUILD)
+        self.POETRY_CONF = os.path.join(self.BACKEND, AssetFilenames.POETRY_CONF)
+        self.BACKEND_BUILD = os.path.join(self.BACKEND, AssetFilenames.BUILD)
 
         self.STATIC = os.path.join(self.ROOT, SetupAssetsDirNames.FRONTEND, STATIC_DIR_NAME)
-        self.CSS = os.path.join(self.STATIC, SetupAssetsDirNames.CSS)
-        self.JS = os.path.join(self.STATIC, SetupAssetsDirNames.JS)
-        self.IMGS = os.path.join(self.STATIC, SetupAssetsDirNames.IMGS)
 
         self.BACKEND_TESTS = os.path.join(self.BACKEND, 'tests')
-        self.PYTEST_INI = os.path.join(os.path.dirname(self.ROOT), 'pytest.ini')
+        self.PYTEST_INI = os.path.join(self.BACKEND, 'pytest.ini')
         self.PACKAGE_JSON = os.path.join(self.FRONTEND, 'package.json')
 
 
@@ -107,12 +95,10 @@ class DockerPaths:
         self.compose = 'docker-compose'
 
         self._yml_ext = '.yml'
-        self._project_root = os.path.dirname(os.getcwd())
+        self.PROJECT_ROOT = os.getcwd()
 
-        self.ROOT_DIR = os.path.join(self._project_root, SetupAssetsDirNames.CONFIG, SetupAssetsDirNames.DOCKERFILES)
-
-        self.BACKEND_DF = os.path.join(self.ROOT_DIR, f'{self.df}.backend')
-        self.IGNORE = os.path.join(self._project_root, '.dockerignore')
+        self.BACKEND_DF = os.path.join(self.PROJECT_ROOT, f'{self.df}.backend')
+        self.FRONTEND_DF = os.path.join(self.PROJECT_ROOT, f'{self.df}.frontend')
+        self.IGNORE = os.path.join(self.PROJECT_ROOT, '.dockerignore')
         
-        self.COMPOSE_BASE = os.path.join(self._project_root, f"{self.compose}.base{self._yml_ext}")
-        self.COMPOSE_MAIN = os.path.join(self._project_root, f"{self.compose}{self._yml_ext}")
+        self.COMPOSE_MAIN = os.path.join(self.PROJECT_ROOT, f"{self.compose}{self._yml_ext}")

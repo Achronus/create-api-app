@@ -1,5 +1,3 @@
-import os
-
 from .base import ControllerBase
 from ..conf.constants.docker import DockerFileMapper
 from ..conf.constants.filepaths import DockerPaths
@@ -26,7 +24,6 @@ class DockerFileController(ControllerBase):
 
     def create_dockerfiles(self) -> None:
         """Creates the required Dockerfiles in the appropriate folder."""
-        os.makedirs(self.paths.ROOT_DIR, exist_ok=True)
         self.__create_files(self.mapper.dockerfiles())
 
     def create_compose_files(self) -> None:

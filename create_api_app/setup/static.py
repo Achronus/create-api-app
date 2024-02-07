@@ -1,5 +1,6 @@
 import os
 import shutil
+import textwrap
 
 from ..conf.constants.docker import DockerContent
 from ..conf.constants.filepaths import (
@@ -8,6 +9,7 @@ from ..conf.constants.filepaths import (
     ProjectPaths, 
     get_db_url
 )
+from ..conf.constants.poetry import PoetryContent
 from .base import ControllerBase
 
 
@@ -15,18 +17,20 @@ class StaticAssetsController(ControllerBase):
     """A controller for handling the static assets."""
     def __init__(self) -> None:
         tasks = [
-            (self.move_setup_assets, "Setting up core [green]frontend[/green] and [green]backend[/green] files"),
-            (self.create_dotenv, "Building [magenta].env[/magenta] files")
+            (self.move_setup_assets, "Setting up [green]frontend[/green] and [yellow]backend[/yellow] files"),
+            (self.create_dotenv, "Building [magenta].env[/magenta] files"),
+            (self.create_build, "Creating backend [yellow]build[/yellow] file")
         ]
 
         super().__init__(tasks)
 
+        self.poetry_content = PoetryContent()
         self.project_paths = ProjectPaths()
 
     def create_dotenv(self) -> None:
         """Creates a `.env` file in the root for docker specific config and another in the backend folder. Adds items to them both."""
         docker_content = DockerContent()
-        docker_path = os.path.join(os.path.dirname(os.getcwd()), AssetFilenames.PROD_ENV)
+        docker_path = os.path.join(self.project_paths.ROOT, AssetFilenames.PROD_ENV)
         backend_path = os.path.join(self.project_paths.BACKEND, AssetFilenames.LOCAL_ENV)
 
         with open(docker_path, "w") as file:
@@ -38,3 +42,10 @@ class StaticAssetsController(ControllerBase):
     def move_setup_assets(self) -> None:
         """Moves the items in the `setup_assets` folder into the project directory."""
         shutil.copytree(SetupDirPaths.ASSETS, os.getcwd(), dirs_exist_ok=True)
+
+    def create_build(self) -> None:
+        """Creates a build file in the root directory for starting the backend server."""
+        content = textwrap.dedent(self.poetry_content.BUILD_FILE_CONTENT)[1:]
+
+        with open(self.project_paths.BACKEND_BUILD, 'w') as file:
+            file.write(content)

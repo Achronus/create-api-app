@@ -3,7 +3,7 @@ import pytest
 
 
 class TestLocalDotEnv:
-    def test_path_valid(self, conf) -> None:
+    def test_backend_path_valid(self, conf) -> None:
         path = os.path.join(os.getcwd(), '<REPLACE>', 'backend', '.env.local')
         assert conf.FILEPATHS.ENV_LOCAL == path, f'Invalid: {conf.FILEPATHS.ENV_LOCAL}'
 

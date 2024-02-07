@@ -18,7 +18,7 @@ class FastAPIDirPaths:
     def __init__(self) -> None:
         project_paths = ProjectPaths()
 
-        self.DATABASE_DIR = os.path.join(project_paths.BACKEND, FastAPIDirnames.DATABASE)
+        self.DATABASE_DIR = os.path.join(project_paths.BACKEND_APP, FastAPIDirnames.DATABASE)
         self.DATABASE_INIT_FILE = os.path.join(self.DATABASE_DIR, FastAPIFilenames.BASE)
 
 
@@ -30,7 +30,7 @@ class FastAPIContent:
     PYTEST_INI = textwrap.dedent("""
     [pytest]
     env_files =
-        .env.local
+        backend/.env.local
         .env.prod
 
     addopts = -v -s

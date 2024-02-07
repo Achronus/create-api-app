@@ -1,6 +1,5 @@
 import re
 import os
-import shutil
 import subprocess
 import sys
 
@@ -48,12 +47,10 @@ class VEnvController(ControllerBase):
     def init_project(self) -> None:
         """Creates a poetry project."""
         # Create Poetry project
-        subprocess.run(["poetry", "new", self.project_paths.PROJECT_NAME], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["poetry", "new", "app"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # Organise new project directory
-        shutil.rmtree(os.path.join(self.project_paths.PROJECT, self.project_paths.PROJECT_NAME))
-        shutil.move(self.project_paths.INIT_POETRY_CONF, self.project_paths.ROOT)
-        shutil.move(self.project_paths.INIT_README, self.project_paths.ROOT)
+        os.rename(os.path.join(self.project_paths.ROOT, 'app'), 'backend')
+        os.chdir(self.project_paths.BACKEND)
 
         # Add scripts to pyproject.toml
         insert_into_file(
@@ -74,5 +71,4 @@ class VEnvController(ControllerBase):
         pv_result = subprocess.run(["poetry", "--version"], capture_output=True, text=True)
         set_poetry_version(re.search(r'\d+\.\d+\.\d+', pv_result.stdout).group(0))
 
-        # Move into project directory
-        os.chdir(self.project_paths.PROJECT)
+        os.chdir(self.project_paths.ROOT)

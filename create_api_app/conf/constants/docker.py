@@ -163,7 +163,7 @@ class DockerContent:
             container_name: backend
             build:
               context: .
-              dockerfile: ./config/docker/Dockerfile.backend
+              dockerfile: Dockerfile.backend
               args:
                 POETRY_VERSION: ${POETRY_VERSION}
                 PROJECT_NAME: ${PROJECT_NAME}

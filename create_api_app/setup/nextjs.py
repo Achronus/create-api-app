@@ -20,5 +20,6 @@ class NextJSController(ControllerBase):
         os.chdir(self.project_paths.FRONTEND)
 
         subprocess.run(["bun", "add", *NPM_PACKAGES], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["bun", "update", "-f"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         os.chdir(self.project_paths.ROOT)
