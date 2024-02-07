@@ -1,6 +1,11 @@
 import textwrap
 
-from .filepaths import get_project_name, get_poetry_version, DockerPaths
+from .filepaths import (
+    AssetFilenames, 
+    get_project_name, 
+    get_poetry_version, 
+    DockerPaths
+)
 
 
 class DockerEnvConfig:
@@ -10,6 +15,7 @@ class DockerEnvConfig:
 
         # Docker-compose
         self.ports = "8080:80"
+        self.env_name = AssetFilenames.PROD_ENV
 
         # Uvicorn
         self.port = self.ports.split(':')[-1]
@@ -80,20 +86,18 @@ class DockerContent:
 
     def backend_df(self) -> str:
         """The content for the backend Dockerfile."""
-        start = f"""
+        return self.__format(f"""
         # Dockerfile for FastAPI
         ARG PYTHON_VERSION={self.dotenv_config.python_version}
         ARG BUILD_VERSION=${{PYTHON_VERSION}}{self.dotenv_config.version_extension}
-        """
 
-        return self.__format(start + """
         ########################################
         # --- Base ---
         ########################################
-        FROM python:${BUILD_VERSION}-alpine as base
+        FROM python:${{BUILD_VERSION}}-alpine as base
 
         ARG PROJECT_NAME
-        ENV PROJECT_NAME=${PROJECT_NAME}
+        ENV PROJECT_NAME=${{PROJECT_NAME}}
 
         # Set working directory
         WORKDIR /app
@@ -114,10 +118,10 @@ class DockerContent:
             PIP_DISABLE_PIP_VERSION_CHECK=on \\
             PIP_DEFAULT_TIMEOUT=100 \\
             # Poetry config
-            POETRY_VERSION=${POETRY_VERSION}
+            POETRY_VERSION=${{POETRY_VERSION}}
 
         # Copy project and poetry files
-        COPY /backend .env.prod /app/
+        COPY /backend {self.dotenv_config.env_name} /app/
 
         # install system dependencies, update pip, install poetry, its packages, and cleanup
         RUN apk update && \\
@@ -135,9 +139,9 @@ class DockerContent:
         ARG PYTHON_VERSION && \\
             PORT
 
-        ENV PROJECT_NAME=${PROJECT_NAME} \\
-            PACKAGE_DIR=/usr/local/lib/python${PYTHON_VERSION}/site-packages \\
-            PORT=${PORT}
+        ENV PROJECT_NAME=${{PROJECT_NAME}} \\
+            PACKAGE_DIR=/usr/local/lib/python${{PYTHON_VERSION}}/site-packages \\
+            PORT=${{PORT}}
 
         # Copy files from builder
         COPY --from=builder /app /app/
@@ -151,10 +155,10 @@ class DockerContent:
         """The content for the main (entry point) Docker Compose file."""
         return self.__format("""
         # Run command:
-        # docker-compose --env-file .env.prod up -d --build
+        # docker-compose up -d --build
 
         # Exit command:
-        # docker-compose --env-file .env.prod down
+        # docker-compose down
 
         version: '1'
 

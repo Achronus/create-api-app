@@ -18,15 +18,10 @@ class AssetFilenames:
     README = 'README.md'
     
     LOCAL_ENV = '.env.local'
-    PROD_ENV = '.env.prod'
+    PROD_ENV = '.env'
 
     MAIN = 'main.py'
     BUILD = 'build.py'
-
-
-# Static folder directory names
-class StaticDirNames:
-    ROOT = os.path.join(os.getcwd(), STATIC_DIR_NAME, SetupAssetsDirNames.FRONTEND)
 
 
 # Setup assets filepaths

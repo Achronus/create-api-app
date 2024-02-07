@@ -29,7 +29,7 @@ class FileLoader:
             PUBLIC=PUBLIC
         )
         self.FILEPATHS = FilePaths(
-            '.env.prod',
+            '.env',
             '.env.local'
         )
 
