@@ -14,20 +14,25 @@ class DockerEnvConfig:
         self.project_name = get_project_name()
 
         # Docker-compose
-        self.ports = "8080:80"
         self.env_name = AssetFilenames.PROD_ENV
-
-        # Uvicorn
-        self.port = self.ports.split(':')[-1]
         self.host = "0.0.0.0"
 
+        self.bak_ports = "8080:80"
+        self.bak_port = self.bak_ports.split(':')[-1]
+
+        self.fnt_ports = "3000:3000"
+        self.fnt_port = self.fnt_ports.split(':')[-1]
+
+        # Dockerfiles
         self.python_version = '3.12'
         self.version_extension = '.1'
+
+        self.bun_version = '1.0.26'
 
 
 class DockerContent:
     def __init__(self) -> None:
-        self.dotenv_config = DockerEnvConfig()
+        self.config = DockerEnvConfig()
 
     @staticmethod
     def __format(content: str) -> str:
@@ -46,14 +51,17 @@ class DockerContent:
         #--------------------------
         # DOCKER CONFIG SETTINGS
         # -------------------------
-        # Docker config
-        POETRY_VERSION={self.dotenv_config.poetry_version}
-        PROJECT_NAME={self.dotenv_config.project_name}
-        PORTS={self.dotenv_config.ports}
+        PROJECT_NAME={self.config.project_name}
+        HOST={self.config.host}
 
-        # Uvicorn
-        PORT={self.dotenv_config.port}
-        HOST={self.dotenv_config.host}
+        # Uvicorn (FastAPI)
+        POETRY_VERSION={self.config.poetry_version}
+        BAK_PORT={self.config.bak_port}
+        BAK_PORTS={self.config.bak_ports}
+        
+        # NextJS
+        FNT_PORT={self.config.fnt_port}
+        FNT_PORTS={self.config.fnt_ports}
         """)
     
     def dockerignore(self) -> str:
@@ -88,8 +96,9 @@ class DockerContent:
         """The content for the backend Dockerfile."""
         return self.__format(f"""
         # Dockerfile for FastAPI
-        ARG PYTHON_VERSION={self.dotenv_config.python_version}
-        ARG BUILD_VERSION=${{PYTHON_VERSION}}{self.dotenv_config.version_extension}
+        # https://hub.docker.com/_/python/tags
+        ARG PYTHON_VERSION={self.config.python_version}
+        ARG BUILD_VERSION=${{PYTHON_VERSION}}{self.config.version_extension}
 
         ########################################
         # --- Base ---
@@ -121,7 +130,7 @@ class DockerContent:
             POETRY_VERSION=${{POETRY_VERSION}}
 
         # Copy project and poetry files
-        COPY /backend {self.dotenv_config.env_name} /app/
+        COPY /backend {self.config.env_name} /app/
 
         # install system dependencies, update pip, install poetry, its packages, and cleanup
         RUN apk update && \\
@@ -151,6 +160,58 @@ class DockerContent:
         EXPOSE $PORT
         """)
 
+    def frontend_df(self) -> str:
+        """The content for the frontend Dockerfile."""
+        return self.__format(f"""
+        # Dockerfile for NextJS
+        # https://hub.docker.com/r/oven/bun/tags
+        ARG BUILD_VERSION=${self.config.bun_version}
+
+        ########################################
+        # --- Base ---
+        ########################################
+        FROM oven/bun:${{BUILD_VERSION}}-alpine as base
+
+        ARG PROJECT_NAME
+        ENV PROJECT_NAME=${{PROJECT_NAME}}
+
+        # Set working directory
+        WORKDIR /app
+                             
+        # Install yarn (mitigates bun NextJS run bug)
+        RUN apk update && \\
+            apk add --no-cache curl bash yarn
+
+        ########################################
+        # --- Builder Stage ---
+        ########################################
+        FROM base AS builder
+
+        # Copy project files
+        COPY /frontend /app
+
+        # Install packages
+        RUN bun install
+
+        # ########################################
+        # # --- Runtime Stage ---
+        # ########################################
+        FROM base AS runtime
+
+        ARG PORT
+        ENV PORT=${{PORT}}
+
+        # Copy files from builder
+        COPY --from=builder /app/ /app/
+
+        # Expose the required port
+        EXPOSE $PORT
+
+        # run server
+        # CMD ["sleep", "infinity"]
+        CMD ["yarn", "run", "dev"]
+        """)
+
     def compose_main(self) -> str:
         """The content for the main (entry point) Docker Compose file."""
         return self.__format("""
@@ -171,13 +232,26 @@ class DockerContent:
               args:
                 POETRY_VERSION: ${POETRY_VERSION}
                 PROJECT_NAME: ${PROJECT_NAME}
-                PORT: ${PORT}
+                PORT: ${BAK_PORT}
             ports:
-            - "${PORTS}"
+            - "${BAK_PORTS}"
             volumes:
             - .:/${PROJECT_NAME}
             # entrypoint: ['sleep', 'infinity']
             entrypoint: ["python", "-m", "build"]
+                             
+          frontend:
+            container_name: frontend
+            build:
+              context: .
+              dockerfile: Dockerfile.frontend
+              args:
+                PROJECT_NAME: ${PROJECT_NAME}
+                PORT: ${FNT_PORT}
+            volumes:
+            - .:/${PROJECT_NAME}
+            ports:
+            - "${FNT_PORTS}"
         """)
 
 
@@ -189,7 +263,8 @@ class DockerFileMapper:
     def dockerfiles(self) -> list[tuple[str, str]]:
         """Maps the pairs of filepaths and content for Dockerfiles."""
         return [
-            (self.paths.BACKEND_DF, self.content.backend_df())
+            (self.paths.BACKEND_DF, self.content.backend_df()),
+            (self.paths.FRONTEND_DF, self.content.frontend_df())
         ]
 
     def compose_files(self) -> list[tuple[str, str]]:
