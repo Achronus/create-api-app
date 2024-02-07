@@ -65,24 +65,20 @@ We've taken great care to try to maximise compatibility across the main OS's, bu
 
 ## Customisation and Configuration
 
-As mentioned previously, we've limited the customisation to the `DATABASE_URL`. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
+As mentioned previously, we've limited the customisation to the `DATABASE_TYPE`. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
 
 The tool is designed to provide a base template for `FastAPI` and `NextJS` projects, allowing developers to quickly create a skeleton project that they can configure themselves. Adding extra unnecessary complexity would only makes things more complicated, so we went back to basics and focused on the essentials.
 
 Fortunately, this reduced the tool down to two simple commands: `docker build` and `docker run`. We'll discuss this more in the next section.
 
-Firstly, we want to highlight that the appropriate dependencies are automatically setup depending on the start of the `DATABASE_URL`. For example, consider the following url:
+Firstly, we want to highlight that the appropriate dependencies are automatically setup depending on the `DATABASE_TYPE`. This has two valid options:
 
-```
-postgresql://<username>:<password>@postgresserver/db
-```
+- SQL
+- Mongo
 
-When the first part of the url (before `://`) contains `sql`, [sqlalchemy](https://www.sqlalchemy.org/) is configured on the `backend`. However, if it contains `mongo` we assume a `MongoDB` database and [beanie](https://beanie-odm.dev/) is configured instead.
+Depending on the selection, the backend of the database will automatically be setup with either [sqlalchemy](https://www.sqlalchemy.org/) or [beanie](https://beanie-odm.dev/), respectively.
 
-If using a `SQL` database, we strongly advise starting with a local database such as `SQLite`. You can create one using this url:
-```
-sqlite:///./database.db
-```
+For simplicity, when selecting `SQL` (the default option) we've configured the backend with a `SQLite` database and make it easy to switch to other ones. 
 
 SQL is typically easier to implement, due to the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/sql-databases/?h=sql). However, we personally prefer `MongoDB` due to its [sustainability goals](https://www.mongodb.com/company/sustainability), so we cannot help but encourage others to use it as well!
 
@@ -105,22 +101,29 @@ _❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean
 
 ## Starting A Created Project
 
+You'll need to update the `backend/.env.local` and `frontend/.env.local` files before you can work with the project. 
+
+The `backend/.env.local` is the easiest. Just select and update the `DATABASE_URL` you want to use.
+
+`frontend/.env.local` is a little more time consuming, but pretty self-explanatory. Open the URLs provided in the file, create an account (or use an existing one), and fill in the API key details for each one. Feel free to remove any variables you don't need or want! 
+
 With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
 
 ```bash
 cd <file_path>/<project_name>  # Navigate to the project directory...
-docker-compose --env-file .env.prod up -d --build
+docker-compose -d --build
 ```
 
-Then access the site at [localhost:8080](http://localhost:8080).
+Then access the backend at [localhost:8080](http://localhost:8080) and frontend at [localhost:3000](http://localhost:3000).
 
-### Development Testing
+### Running Unit Tests In Development
 
 Testing from a docker container is a little complicated, so instead we advise performing standard testing procedures from your local machine. 
 
 With the `backend`, we can use a `poetry shell` to run our unit tests with `pytest`. Simply, access a shell, install the packages and run `pytest` like normal.
 
 ```bash
+cd backend
 poetry shell
 poetry install
 pytest
@@ -128,12 +131,12 @@ pytest
 
 ### Moving To Production
 
-When moving to production, simply update the `ENV_TYPE` variable in `<project_name>/.env.prod` from `dev` -> `prod`!
+When moving to production, update the `ENV_TYPE` variable in `<project_name>/.env` from `dev` -> `prod`!
 
-You can then use the same docker-compose command to run the production environment.
+Then use the docker-compose command with the production file to run the production environment.
 
 ```bash
-docker-compose --env-file .env.prod up -d --build
+docker-compose -f docker-compose.prod.yml -d --build
 ```
 
 ### Folder Structure
@@ -172,7 +175,7 @@ The newly created project should look similar to the following:
 |   |   └── app
 |   |   |   └── ...
 |   |   └── middleware.ts
-|   └── .env.example
+|   └── .env.local
 |   └── .eslintrc.json
 |   └── .gitignore
 |   └── bun.lockb
@@ -184,8 +187,10 @@ The newly created project should look similar to the following:
 |   └── tailwind.config.ts
 |   └── tsconfig.json
 └── .dockerignore
-└── .env.prod
+└── .env
+└── docker-compose.prod.yml
 └── docker-compose.yml
 └── Dockerfile.backend
 └── Dockerfile.frontend
+└── Dockerfile.frontend.prod
 ```
