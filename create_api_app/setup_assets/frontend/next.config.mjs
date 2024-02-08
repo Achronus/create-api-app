@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  reactStrictMode: false,
   images: {
       domains: [
         'uploadthing.com',
@@ -9,7 +11,6 @@ const nextConfig = {
         'files.stripe.com',
       ],
   },
-  reactStrictMode: false,
 };
 
 export default nextConfig;

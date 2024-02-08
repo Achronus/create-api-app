@@ -256,17 +256,16 @@ class DockerContent:
         ENV PORT=${PORT}
 
         # Copy the build output
-        COPY --from=builder /app/.next /app/.next
         COPY --from=builder /app/public /app/public
-        COPY --from=builder /app/package.json /app/package.json
-        COPY --from=builder /app/node_modules /app/node_modules
+        COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone /app/
+        COPY --from=builder --chown=nextjs:nodejs /app/.next/static /app/.next/static
 
         # Expose the required port
         EXPOSE $PORT
 
-        # run server
-        # CMD ["sleep", "infinity"]
-        CMD ["bun", "start"]
+        # server.js is created by next build from the standalone output
+        # https://nextjs.org/docs/pages/api-reference/next-config-js/output
+        CMD ["node", "server.js"]
         """)
 
     def compose_main(self) -> str:
