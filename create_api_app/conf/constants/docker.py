@@ -159,6 +159,10 @@ class DockerContent:
 
         # Expose port
         EXPOSE $PORT
+
+        # Run server
+        # CMD ["sleep", "infinity"]
+        CMD ["python", "-m", "build"]
         """)
 
     def frontend_df(self) -> str:
@@ -295,8 +299,6 @@ class DockerContent:
             - "${BAK_PORTS}"
             volumes:
             - .:/${PROJECT_NAME}
-            # entrypoint: ['sleep', 'infinity']
-            entrypoint: ["python", "-m", "build"]
                              
           frontend:
             container_name: frontend
@@ -307,10 +309,10 @@ class DockerContent:
                 PROJECT_NAME: ${PROJECT_NAME}
                 PORT: ${FNT_PORT}
                 BUILD_VERSION: ${BUN_VERSION}
-            volumes:
-            - .:/${PROJECT_NAME}
             ports:
             - "${FNT_PORTS}"
+            volumes:
+            - .:/${PROJECT_NAME}
         """)
 
     def compose_prod(self) -> str:
