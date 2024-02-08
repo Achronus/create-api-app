@@ -27,7 +27,10 @@ def db_type_choices(value: str) -> str:
 
 @app.command()
 def main(
-        name: Annotated[str, typer.Argument(help="The name of the project", show_default=False)], 
+        name: Annotated[str, typer.Argument(
+            help="The name of the project", 
+            show_default=False
+        )], 
         db_type: Annotated[str, typer.Argument(
             help="The projects database type. Options ['sql', 'mongo']", 
             show_default=True, 
@@ -45,15 +48,13 @@ def main(
     set_db_type(db_type.lower())
 
     # Provide pretty print formats
-    name_print = f'[cyan]{name}[/cyan]'
-    path_print = f'[dark_goldenrod]{path}[/dark_goldenrod]'
+    name_print = f'[purple]{name}[/purple]'
+    access_print = '[dark_goldenrod]docker cp creating_project:/app/<project_name> <path>/<project_name>[/dark_goldenrod]'
 
-    console.print(project_table(name, path))
+    console.print(project_table(name, db_type))
 
     # Replace project if exists
     if os.path.exists(path):
-        typer.confirm("Replace project?", abort=True)
-
         console.print(f"\nRemoving {name_print} and creating a new one...\n")
         shutil.rmtree(path)
     else:
@@ -68,7 +69,7 @@ def main(
 
     # End of script
     console.print(project_complete_panel())
-    console.print(f"Access {name_print} at {path_print}")
+    console.print(f"Access {name_print} with {access_print}")
 
 
 if __name__ == '__main__':

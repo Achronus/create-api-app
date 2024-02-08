@@ -1,19 +1,17 @@
-import os
-
-from ..conf.constants import PASS, FAIL, PARTY
+from ..conf.constants import PARTY
 
 from rich.table import Table
 from rich.panel import Panel
 
 
-def project_table(name: str, path: str) -> Table:
-    """Creates a printable project table showing whether it exists based on a `name` and `path`."""
-    colour, icon = ('green', PASS) if os.path.exists(path) else ('red', FAIL)
-        
+def project_table(name: str, db_type: str) -> Table:
+    """Creates a printable project table showing the `name` and `db_type` selected."""
+    colour = 'bright_green' if db_type == 'mongo' else 'bright_blue'
+    
     table = Table()
-    table.add_column("Project", style="cyan", justify="center")
-    table.add_column("Exists", style=colour, justify="center")
-    table.add_row(name, icon)
+    table.add_column("Project", style="purple", justify="center")
+    table.add_column("DB Type", style=colour, justify="center")
+    table.add_row(name, db_type)
     return table
 
 

@@ -91,6 +91,8 @@ When modifiying the `PYTHON_VERSION`, be aware there are two variables: one for 
 ## Using The Tool
 _❔ Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/)_.
 
+### Local Install
+
 1. To get started, clone the repository, enter the folder and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
 
 ```bash
@@ -98,13 +100,23 @@ git clone https://github.com/Achronus/create-api-app.git
 cd create-api-app
 
 # Build the image
-docker build --build-arg PROJECT_NAME=<project_name> --build-arg DB_TYPE=sql -t create_api_app .
+docker build -t create_api_app .
 
 # Run the tool using a container
-docker run -it --name creating_project create_api_app
+docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project create_api_app
 
 # Copy files from container to local device
 docker cp creating_project:/app/<project_name> <path>/<project_name>
+```
+
+2. Cleanup files (optional):
+
+```bash
+# Remove container only
+docker container rm creating_project -f
+
+# Remove container and image
+docker container rm creating_project -f && docker image rm create_api_app -f
 ```
 
 In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 

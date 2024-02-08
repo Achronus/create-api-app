@@ -3,7 +3,7 @@ import os
 import subprocess
 
 from ..conf.constants import CORE_BACKEND_PACKAGES, BACKEND_DEV_PACKAGES
-from ..conf.constants.filepaths import get_project_name, set_poetry_version
+from ..conf.constants.filepaths import set_poetry_version
 from ..conf.constants.poetry import PoetryContent
 from ..conf.file_handler import insert_into_file
 from .base import ControllerBase
@@ -14,7 +14,7 @@ class VEnvController(ControllerBase):
     def __init__(self) -> None:
         tasks = [
             (self.install, "Installing [yellow]PIP[/yellow] packages"),
-            (self.init_project, f"Initalising [cyan]{get_project_name()}[/cyan] as [green]Poetry[/green] project"),
+            (self.init_project, "Initalising [yellow]backend[/yellow] as [green]Poetry[/green] project"),
             (self.add_dependencies, "Adding [yellow]PIP[/yellow] packages to [green]Poetry[/green]")
         ]
 

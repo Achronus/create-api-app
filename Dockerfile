@@ -6,11 +6,7 @@ ARG BUILD_VERSION=${PYTHON_VERSION}.1
 ###################################################
 FROM python:${BUILD_VERSION}-alpine as builder
 
-ARG PROJECT_NAME && \
-    DB_TYPE
-
-ENV PROJECT_NAME=${PROJECT_NAME} \
-    TERM=xterm-256color \
+ENV TERM=xterm-256color \
     PYTHONFAULTHANDLER=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONHASHSEED=random \
@@ -18,7 +14,9 @@ ENV PROJECT_NAME=${PROJECT_NAME} \
     PIP_NO_CACHE_DIR=off \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100 \
-    DB_TYPE=${DB_TYPE}
+    # Default tool values
+    DB_TYPE=sql \
+    PROJECT_NAME=fastapi_nextjs_app
 
 # Set working directory
 WORKDIR /app
