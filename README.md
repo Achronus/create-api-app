@@ -65,23 +65,21 @@ We've taken great care to try to maximise compatibility across the main OS's, bu
 
 ## Customisation and Configuration
 
-As mentioned previously, we've limited the customisation to the `DATABASE_TYPE`. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
+We've limited the tool customisation to the `DATABASE_TYPE` and the `<project_name>/.env` file. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
 
 The tool is designed to provide a base template for `FastAPI` and `NextJS` projects, allowing developers to quickly create a skeleton project that they can configure themselves. Adding extra unnecessary complexity would only makes things more complicated, so we went back to basics and focused on the essentials.
 
 Fortunately, this reduced the tool down to two simple commands: `docker build` and `docker run`. We'll discuss this more in the next section.
 
-Firstly, we want to highlight that the appropriate dependencies are automatically setup depending on the `DATABASE_TYPE`. This has two valid options:
+It's worth noting, the appropriate dependencies are automatically setup depending on the `DATABASE_TYPE`. This has two valid options: `['SQL', 'Mongo']`.
 
-- SQL
-- Mongo
+Depending on the selection, the backend of the database will setup [sqlalchemy](https://www.sqlalchemy.org/) or [beanie](https://beanie-odm.dev/), respectively.
 
-Depending on the selection, the backend of the database will automatically be setup with either [sqlalchemy](https://www.sqlalchemy.org/) or [beanie](https://beanie-odm.dev/), respectively.
+For simplicity, we've configured the default to `SQL` with a `SQLite` database. SQL is typically easier to implement, due to the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/sql-databases/?h=sql). However, we personally prefer `MongoDB` due to its [sustainability goals](https://www.mongodb.com/company/sustainability), so we cannot help but encourage others to use it as well!
 
-For simplicity, when selecting `SQL` (the default option) we've configured the backend with a `SQLite` database and make it easy to switch to other ones. 
+The `<project_name>/.env` file focuses on the docker file configuration. For example, here you can configure the `PYTHON_VERSION` to use and the `BUN_VERSION`, along with the `PORTS` and `HOST`. 
 
-SQL is typically easier to implement, due to the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/sql-databases/?h=sql). However, we personally prefer `MongoDB` due to its [sustainability goals](https://www.mongodb.com/company/sustainability), so we cannot help but encourage others to use it as well!
-
+When modifiying the `PYTHON_VERSION`, be aware there are two variables: one for the `BUILD` and another for the `SITE_PACKAGES`. Annoyingly, there is no way to 'trim' the build version in a Dockerfile for the site packages, so we've had to use two separate variables instead. Keep in mind `SITE_PACKAGES` can only be `X.Y` while `BUILD` can be `X.Y` or `X.Y.Z`.
 
 ## Using The Tool
 _❔ Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/)_.
@@ -103,11 +101,11 @@ _❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean
 
 You'll need to update the `backend/.env.local` and `frontend/.env.local` files before you can work with the project. 
 
-The `backend/.env.local` is the easiest. Just select and update the `DATABASE_URL` you want to use.
+1. The `backend/.env.local` is the easiest. Just select and update the `DATABASE_URL` you want to use.
 
-`frontend/.env.local` is a little more time consuming, but pretty self-explanatory. Open the URLs provided in the file, create an account (or use an existing one), and fill in the API key details for each one. Feel free to remove any variables you don't need or want! 
+2. `frontend/.env.local` is a little more time consuming, but pretty self-explanatory. Open the URLs provided in the file, create an account (or use an existing one), and fill in the API key details for each one. Feel free to remove any variables you don't need or want! 
 
-With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
+3. With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
 
 ```bash
 cd <file_path>/<project_name>  # Navigate to the project directory...
@@ -115,6 +113,8 @@ docker-compose up -d --build
 ```
 
 Then access the backend at [localhost:8080](http://localhost:8080) and frontend at [localhost:3000](http://localhost:3000).
+
+_💡 Protip: We've configured the docker container names to include `_dev` or `_prod` so you can quickly check which environment you are running!_
 
 ### Running Unit Tests In Development
 
@@ -131,13 +131,13 @@ pytest
 
 ### Moving To Production
 
-When moving to production, update the `ENV_TYPE` variable in `<project_name>/.env` from `dev` -> `prod`!
-
-Then test it works with the production docker-compose file:
+We've made it extremely easy to move from development to production. Simply test everything works by running the production docker-compose file:
 
 ```bash
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
+
+`NextJS` is automatically built and streamlined into a minified format, and `FastAPI` removes the `--reload` flag. If all works, you're good to go!
 
 ### Folder Structure
 
@@ -192,5 +192,4 @@ The newly created project should look similar to the following:
 └── docker-compose.yml
 └── Dockerfile.backend
 └── Dockerfile.frontend
-└── Dockerfile.frontend.prod
 ```

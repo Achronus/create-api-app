@@ -20,16 +20,16 @@ class PoetryContent:
 
         self.start_desc = '"""Start the server."""'
         self.BUILD_FILE_CONTENT = f"""
-        import os
+        import argparse
 
         from app.config.settings import settings
 
         import uvicorn
 
 
-        def start() -> None:
+        def start(env_mode: str) -> None:
             {self.start_desc}
-            reload_check = True if os.getenv('ENV_TYPE') == 'dev' else False
+            reload_check = True if env_mode == 'dev' else False
 
             uvicorn.run(
                 "app.main:app", 
@@ -40,5 +40,9 @@ class PoetryContent:
 
 
         if __name__ == "__main__":
-            start()
+            parser = argparse.ArgumentParser(description='Start the server.')
+            parser.add_argument('-e', '--env', type=str, default='dev', choices=['dev', 'prod'], required=True)
+
+            args = parser.parse_args()
+            start(args.env)
         """

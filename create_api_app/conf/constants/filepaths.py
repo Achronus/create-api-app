@@ -93,7 +93,6 @@ class DockerPaths:
 
         self.BACKEND_DF = os.path.join(self.PROJECT_ROOT, f'{self.df}.backend')
         self.FRONTEND_DF = os.path.join(self.PROJECT_ROOT, f'{self.df}.frontend')
-        self.FRONTEND_PROD_DF = os.path.join(self.PROJECT_ROOT, f'{self.df}.frontend.prod')
         self.IGNORE = os.path.join(self.PROJECT_ROOT, '.dockerignore')
         
         self.COMPOSE_MAIN = os.path.join(self.PROJECT_ROOT, f"{self.compose}{self._yml_ext}")

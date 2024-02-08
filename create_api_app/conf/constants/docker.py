@@ -39,26 +39,19 @@ class DockerContent:
         return textwrap.dedent(content)[1:]
 
     def env_config(self) -> str:
-        return self.__format(f"""
-        #--------------------------
-        # ENVIRONMENT SETTINGS
-        #--------------------------
-        # !IMPORTANT! CHANGE TO 'prod' WHEN IN PRODUCTION
-        # Options: 'dev' or 'prod'
-        ENV_TYPE=dev
-        
+        return self.__format(f"""       
         #--------------------------
         # DOCKER CONFIG SETTINGS
         # -------------------------
         PROJECT_NAME={self.config.project_name}
-        HOST={self.config.host}
 
         # Uvicorn (FastAPI)
         POETRY_VERSION={self.config.poetry_version}
+        HOST={self.config.host}
         BAK_PORT={self.config.bak_port}
         BAK_PORTS={self.config.bak_ports}
-        PYTHON_VERSION_FULL={self.config.python_version_full}
-        PYTHON_VERSION={self.config.python_version}
+        PYTHON_BUILD_VERSION={self.config.python_version_full}
+        PYTHON_SITE_PACKAGES_VERSION={self.config.python_version}
 
         # NextJS
         FNT_PORT={self.config.fnt_port}
@@ -147,11 +140,13 @@ class DockerContent:
         FROM base as runtime
 
         ARG PYTHON_VERSION && \\
-            PORT
+            PORT && \\
+            ENV_MODE
 
         ENV PROJECT_NAME=${{PROJECT_NAME}} \\
             PACKAGE_DIR=/usr/local/lib/python${{PYTHON_VERSION}}/site-packages \\
-            PORT=${{PORT}}
+            PORT=${{PORT}} \\
+            ENV_MODE=${{ENV_MODE}}
 
         # Copy files from builder
         COPY --from=builder /app /app/
@@ -162,7 +157,7 @@ class DockerContent:
 
         # Run server
         # CMD ["sleep", "infinity"]
-        CMD ["python", "-m", "build"]
+        CMD python -m build --env $ENV_MODE
         """)
 
     def frontend_df(self) -> str:
@@ -182,7 +177,7 @@ class DockerContent:
 
         # Set working directory
         WORKDIR /app
-                             
+
         # Install yarn (to fix bun run bug)
         RUN apk update && \\
             apk add --no-cache curl bash yarn
@@ -199,9 +194,9 @@ class DockerContent:
         RUN bun install
 
         ########################################
-        # --- Runtime Stage ---
+        # --- Development Stage ---
         ########################################
-        FROM base AS runtime
+        FROM base AS development
 
         ARG PORT
         ENV PORT=${PORT}
@@ -215,54 +210,25 @@ class DockerContent:
         # run server
         # CMD ["sleep", "infinity"]
         CMD ["bun", "run", "dev"]
-        """)
-
-    def frontend_prod_df(self) -> str:
-        """The content for the frontend production Dockerfile."""
-        return self.__format("""
-        # Dockerfile for NextJS
-        # https://hub.docker.com/r/oven/bun/tags
-        ARG BUILD_VERSION
 
         ########################################
-        # --- Base ---
+        # --- Production Stage ---
         ########################################
-        FROM oven/bun:${BUILD_VERSION}-alpine as base
+        FROM builder AS prod_builder
 
-        ARG PROJECT_NAME
-        ENV PROJECT_NAME=${PROJECT_NAME}
-
-        # Set working directory
-        WORKDIR /app
-                             
-        # Install yarn (to fix bun run bug)
-        RUN apk update && \\
-            apk add --no-cache curl bash yarn
+        # build packages
+        RUN bun run build
 
         ########################################
-        # --- Builder Stage ---
-        ########################################
-        FROM base AS builder
-
-        # Copy project files
-        COPY /frontend /app
-
-        # Install packages
-        RUN bun install && \\
-            bun run build
-
-        ########################################
-        # --- Runtime Stage ---
-        ########################################
-        FROM base AS runtime
+        FROM base AS production
 
         ARG PORT
         ENV PORT=${PORT}
 
         # Copy the build output
-        COPY --from=builder /app/public /app/public
-        COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone /app/
-        COPY --from=builder --chown=nextjs:nodejs /app/.next/static /app/.next/static
+        COPY --from=prod_builder /app/public /app/public
+        COPY --from=prod_builder --chown=nextjs:nodejs /app/.next/standalone /app/
+        COPY --from=prod_builder --chown=nextjs:nodejs /app/.next/static /app/.next/static
 
         # Expose the required port
         EXPOSE $PORT
@@ -285,7 +251,7 @@ class DockerContent:
 
         services:
           backend:
-            container_name: backend
+            container_name: backend_dev
             build:
               context: .
               dockerfile: Dockerfile.backend
@@ -293,18 +259,20 @@ class DockerContent:
                 POETRY_VERSION: ${POETRY_VERSION}
                 PROJECT_NAME: ${PROJECT_NAME}
                 PORT: ${BAK_PORT}
-                PYTHON_VERSION: ${PYTHON_VERSION}
-                BUILD_VERSION: ${PYTHON_VERSION_FULL}
+                PYTHON_VERSION: ${PYTHON_SITE_PACKAGES_VERSION}
+                BUILD_VERSION: ${PYTHON_BUILD_VERSION}
+                ENV_MODE: dev
             ports:
             - "${BAK_PORTS}"
             volumes:
             - .:/${PROJECT_NAME}
                              
           frontend:
-            container_name: frontend
+            container_name: frontend_dev
             build:
               context: .
               dockerfile: Dockerfile.frontend
+              target: development
               args:
                 PROJECT_NAME: ${PROJECT_NAME}
                 PORT: ${FNT_PORT}
@@ -319,7 +287,7 @@ class DockerContent:
         """The content for the production Docker Compose file."""
         return self.__format("""
         # Run command:
-        # docker-compose -f docker-compose.prod.yml up -d --build
+        # docker-compose -f docker-compose.prod.yml up -d --build 
 
         # Exit command:
         # docker-compose down
@@ -332,6 +300,9 @@ class DockerContent:
               file: docker-compose.yml
               service: backend
             container_name: backend_prod
+            build:
+              args:
+                ENV_MODE: prod
                              
           frontend:
             extends:
@@ -339,12 +310,7 @@ class DockerContent:
               service: frontend
             container_name: frontend_prod
             build:
-              context: .
-              dockerfile: Dockerfile.frontend.prod
-              args:
-                PROJECT_NAME: ${PROJECT_NAME}
-                PORT: ${FNT_PORT}
-                BUILD_VERSION: ${BUN_VERSION}
+              target: production
         """)
 
 
@@ -357,8 +323,7 @@ class DockerFileMapper:
         """Maps the pairs of filepaths and content for Dockerfiles."""
         return [
             (self.paths.BACKEND_DF, self.content.backend_df()),
-            (self.paths.FRONTEND_DF, self.content.frontend_df()),
-            (self.paths.FRONTEND_PROD_DF, self.content.frontend_prod_df())
+            (self.paths.FRONTEND_DF, self.content.frontend_df())
         ]
 
     def compose_files(self) -> list[tuple[str, str]]:
