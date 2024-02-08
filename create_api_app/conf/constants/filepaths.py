@@ -39,8 +39,8 @@ def set_project_name(name: str) -> None:
     __dotenv_setter('PROJECT_NAME', name)
 
 
-def set_db_url(url: str) -> None:
-    __dotenv_setter('DATABASE_URL', url)
+def set_db_type(type: str) -> None:
+    __dotenv_setter('DB_TYPE', type)
 
 
 def set_poetry_version(version: str) -> None:
@@ -51,8 +51,8 @@ def get_project_name() -> str:
     return os.environ.get('PROJECT_NAME')
 
 
-def get_db_url() -> str:
-    return os.environ.get('DATABASE_URL')
+def get_db_type() -> str:
+    return os.environ.get('DB_TYPE')
 
 
 def get_poetry_version() -> str:

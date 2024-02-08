@@ -3,8 +3,9 @@ import shutil
 import subprocess
 
 from .base import ControllerBase
+from ..conf.constants import SQL_PACKAGES, MONGO_PACKAGES
 from ..conf.constants.fastapi import FastAPIDirPaths, FastAPIContent
-from ..conf.constants.filepaths import get_db_url
+from ..conf.constants.filepaths import get_db_type
 from ..conf.file_handler import insert_into_file
 
 
@@ -21,10 +22,10 @@ class FastAPIFileController(ControllerBase):
         self.dir_paths = FastAPIDirPaths()
         self.root_path = self.project_paths.BACKEND_APP
 
-    def __package_update(self, package_name: str, db_type: str) -> None:
+    def __package_update(self, packages: list[str]) -> None:
         """Helper function for `check_db`. Installed the relevant package, renames the correct `db` folder and removes the unneeded one."""
         new_path = os.path.join(self.root_path, 'db')
-        old_path = f'{new_path}_{db_type}'
+        old_path = f'{new_path}_{get_db_type()}'
 
         os.rename(old_path, new_path)
 
@@ -38,26 +39,23 @@ class FastAPIFileController(ControllerBase):
         # Install correct packages
         os.chdir(self.project_paths.BACKEND)
 
-        subprocess.run(["poetry", "add", package_name], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["poetry", "add", *packages], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         os.chdir(self.project_paths.ROOT)
 
     def check_db(self) -> None:
         """Configures the correct backend database."""
-        db_url = get_db_url().split('://')[0]
-
-        if 'mongo' in db_url:
-           self.__package_update("beanie", "mongo")
+        if get_db_type() == 'mongo':
+           self.__package_update(MONGO_PACKAGES)
            os.remove(os.path.join(self.root_path, 'dependencies.py'))
         else:
-            self.__package_update("sqlalchemy", "sql")
+            self.__package_update(SQL_PACKAGES)
 
-            if db_url == 'sqlite':
-                insert_into_file(
-                    FastAPIContent.SQLITE_DB_POSITION, 
-                    FastAPIContent.SQLITE_DB_CONTENT, 
-                    self.dir_paths.DATABASE_INIT_FILE
-                )
+            insert_into_file(
+                FastAPIContent.SQLITE_DB_POSITION, 
+                FastAPIContent.SQLITE_DB_CONTENT, 
+                self.dir_paths.DATABASE_INIT_FILE
+            )
 
     def configure_tests(self) -> None:
         """Adds a `pytest.ini` file to the backend directory."""

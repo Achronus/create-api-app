@@ -2,12 +2,13 @@ import os
 import shutil
 import textwrap
 
+from ..conf.constants import MONGO_URLS, SQL_URLS
 from ..conf.constants.docker import DockerContent
 from ..conf.constants.filepaths import (
     AssetFilenames, 
     SetupDirPaths, 
-    ProjectPaths, 
-    get_db_url
+    ProjectPaths,
+    get_db_type
 )
 from ..conf.constants.poetry import PoetryContent
 from .base import ControllerBase
@@ -37,11 +38,10 @@ class StaticAssetsController(ControllerBase):
             file.write(docker_content.env_config())
 
         with open(backend_path, "w") as file:
-            file.write(
-                f'DATABASE_URL={get_db_url()}\n' + 
-                '# DATABASE_URL=postgresql://<username>:<password>@postgresserver/db\n' +
-                '# DATABASE_URL=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority'
-            )
+            if get_db_type() == 'mongo':
+                file.write(MONGO_URLS)
+            else:
+                file.write(SQL_URLS)
 
         # Update frontend .env.example -> .env.local
         frontend_env = os.path.join(self.project_paths.FRONTEND, '.env.example')

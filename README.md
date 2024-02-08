@@ -1,4 +1,4 @@
-__Note: This project is a work in progress and does NOT currently work! Check back once a version is released!__
+__Note: this project works with `SQL` but not `Mongo` (yet)! Mongo files will be added soon!__
 
 # Create API App Quickstart Tool
 
@@ -65,15 +65,22 @@ We've taken great care to try to maximise compatibility across the main OS's, bu
 
 ## Customisation and Configuration
 
-We've limited the tool customisation to the `DATABASE_TYPE` and the `<project_name>/.env` file. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
+We've limited the tool customisation to the `DB_TYPE`, `PROJECT_NAME`, and the `<project_name>/.env` file. Originally, we planned to provide additional commands for adding packages but realised it defeats the purpose of the tool. 
 
 The tool is designed to provide a base template for `FastAPI` and `NextJS` projects, allowing developers to quickly create a skeleton project that they can configure themselves. Adding extra unnecessary complexity would only makes things more complicated, so we went back to basics and focused on the essentials.
 
-Fortunately, this reduced the tool down to two simple commands: `docker build` and `docker run`. We'll discuss this more in the next section.
+### Database
 
-It's worth noting, the appropriate dependencies are automatically setup depending on the `DATABASE_TYPE`. This has two valid options: `['SQL', 'Mongo']`.
+It's worth noting, the appropriate dependencies are automatically setup depending on the `DB_TYPE` and configured with appropriate file templates. This has two valid options: `['sql', 'mongo']`.
 
-Depending on the selection, the backend of the database will setup [sqlalchemy](https://www.sqlalchemy.org/) or [beanie](https://beanie-odm.dev/), respectively.
+If `sql` we install:
+
+- [sqlalchemy](https://www.sqlalchemy.org/)
+
+If `mongo` we install:
+
+- [beanie](https://beanie-odm.dev/)
+- [motor](https://motor.readthedocs.io/en/stable/)
 
 For simplicity, we've configured the default to `SQL` with a `SQLite` database. SQL is typically easier to implement, due to the [FastAPI documentation](https://fastapi.tiangolo.com/tutorial/sql-databases/?h=sql). However, we personally prefer `MongoDB` due to its [sustainability goals](https://www.mongodb.com/company/sustainability), so we cannot help but encourage others to use it as well!
 
@@ -84,28 +91,34 @@ When modifiying the `PYTHON_VERSION`, be aware there are two variables: one for 
 ## Using The Tool
 _❔ Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/)_.
 
-1. To get started, clone the repository, enter the folder and run the docker commands:
+1. To get started, clone the repository, enter the folder and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
 
 ```bash
 git clone https://github.com/Achronus/create-api-app.git
 cd create-api-app
-docker build ?
-docker run ?
+
+# Build the image
+docker build --build-arg PROJECT_NAME=<project_name> --build-arg DB_TYPE=sql -t create_api_app .
+
+# Run the tool using a container
+docker run -it --name creating_project create_api_app
+
+# Copy files from container to local device
+docker cp creating_project:/app/<project_name> <path>/<project_name>
 ```
 
-In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete you a new folder is added inside it with the desired `<project_name>`. Move the folder to where you want, and then tweak it as need. 
+In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
 
-_❗ Note: We use the `-rm` flag in the `Docker` commands to automatically clean up the container and its images, removing them after the project is successfully built._
+_❗ Note: We use the `-it` flag to display colour formatting for the console, use `creating_project` as the container name and `create_api_app` as the image name._
 
 ## Starting A Created Project
 
 You'll need to update the `backend/.env.local` and `frontend/.env.local` files before you can work with the project. 
 
-1. The `backend/.env.local` is the easiest. Just select and update the `DATABASE_URL` you want to use.
-
+1. The `backend/.env.local` is the easiest. Just update the `DATABASE_URL` with your `username`, `password`, and `cluster` (if needed, denoted with `<>`).
 2. `frontend/.env.local` is a little more time consuming, but pretty self-explanatory. Open the URLs provided in the file, create an account (or use an existing one), and fill in the API key details for each one. Feel free to remove any variables you don't need or want! 
 
-3. With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command run:
+3. With everything setup, enter the `<project_name>` directory and start the `dev` server using the following command:
 
 ```bash
 cd <file_path>/<project_name>  # Navigate to the project directory...
@@ -114,7 +127,7 @@ docker-compose up -d --build
 
 Then access the backend at [localhost:8080](http://localhost:8080) and frontend at [localhost:3000](http://localhost:3000).
 
-_💡 Protip: We've configured the docker container names to include `_dev` or `_prod` so you can quickly check which environment you are running!_
+_💡 Pro-tip: We've configured the docker container names to include `_dev` or `_prod` so you can quickly check which environment you are running!_
 
 ### Running Unit Tests In Development
 
@@ -131,7 +144,7 @@ pytest
 
 ### Moving To Production
 
-We've made it extremely easy to move from development to production. Simply test everything works by running the production docker-compose file:
+We've made it extremely easy to move from development to production. Simply test that everything works by running the production docker-compose file:
 
 ```bash
 docker-compose -f docker-compose.prod.yml up -d --build
@@ -156,7 +169,7 @@ The newly created project should look similar to the following:
 |   |   └── utils
 |   |   |   └── ...
 |   |   └── __init__.py
-|   |   └── dependencies.py
+|   |   └── dependencies.py  # SQL only
 |   |   └── main.py
 |   └── tests
 |   |   └── ...
