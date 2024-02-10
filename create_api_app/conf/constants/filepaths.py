@@ -23,6 +23,10 @@ class AssetFilenames:
     MAIN = 'main.py'
     BUILD = 'build.py'
 
+    MAIN_SQL = 'main_sql.py'
+    MAIN_MONGO = 'main_mongo.py'
+    DEPENDENCIES = 'dependencies.py'
+
 
 # Setup assets filepaths
 class SetupDirPaths:

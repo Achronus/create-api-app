@@ -4,6 +4,9 @@ from ..utils.fileloader import FileLoader
 
 
 class Settings:
+    DB_NAME = 'demo'
+    COLLECTION_DEMO = 'demo_collection'
+
     __fileloader = FileLoader()
 
     DIRPATHS = __fileloader.DIRPATHS

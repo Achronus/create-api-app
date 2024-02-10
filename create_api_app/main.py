@@ -49,7 +49,7 @@ def main(
 
     # Provide pretty print formats
     name_print = f'[purple]{name}[/purple]'
-    access_print = '[dark_goldenrod]docker cp creating_project:/app/<project_name> <path>/<project_name>[/dark_goldenrod]'
+    access_print = f'[dark_goldenrod]docker cp creating_project:/app/{name_print} <path>/{name_print}[/dark_goldenrod]'
 
     console.print(project_table(name, db_type))
 

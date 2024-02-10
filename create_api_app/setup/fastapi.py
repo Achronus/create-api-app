@@ -1,13 +1,15 @@
 import os
 import shutil
 import subprocess
+import textwrap
 
 from .base import ControllerBase
 from ..conf.constants import SQL_PACKAGES, MONGO_PACKAGES
-from ..conf.constants.fastapi import FastAPIDirPaths, FastAPIContent
-from ..conf.constants.filepaths import get_db_type
-from ..conf.file_handler import insert_into_file
+from ..conf.constants.filepaths import AssetFilenames, get_db_type
 
+from rich.console import Console
+
+c = Console()
 
 class FastAPIFileController(ControllerBase):
     """A FastAPI file creation controller."""
@@ -19,7 +21,6 @@ class FastAPIFileController(ControllerBase):
 
         super().__init__(tasks)
 
-        self.dir_paths = FastAPIDirPaths()
         self.root_path = self.project_paths.BACKEND_APP
 
     def __package_update(self, packages: list[str]) -> None:
@@ -47,17 +48,31 @@ class FastAPIFileController(ControllerBase):
         """Configures the correct backend database."""
         if get_db_type() == 'mongo':
            self.__package_update(MONGO_PACKAGES)
-           os.remove(os.path.join(self.root_path, 'dependencies.py'))
+           os.remove(os.path.join(self.root_path, AssetFilenames.DEPENDENCIES))
+           os.remove(os.path.join(self.root_path, AssetFilenames.MAIN_SQL))
+
+           os.rename(
+               os.path.join(self.root_path, AssetFilenames.MAIN_MONGO), 
+               os.path.join(self.root_path, AssetFilenames.MAIN)
+            )
         else:
             self.__package_update(SQL_PACKAGES)
-
-            insert_into_file(
-                FastAPIContent.SQLITE_DB_POSITION, 
-                FastAPIContent.SQLITE_DB_CONTENT, 
-                self.dir_paths.DATABASE_INIT_FILE
+            os.remove(os.path.join(self.root_path, AssetFilenames.MAIN_MONGO))
+            
+            os.rename(
+               os.path.join(self.root_path, AssetFilenames.MAIN_SQL), 
+               os.path.join(self.root_path, AssetFilenames.MAIN)
             )
+
 
     def configure_tests(self) -> None:
         """Adds a `pytest.ini` file to the backend directory."""
         with open(self.project_paths.PYTEST_INI, 'w') as file:
-            file.write(FastAPIContent.PYTEST_INI)
+            file.write(textwrap.dedent("""
+            [pytest]
+            env_files =
+                .env.local
+                .env
+
+            addopts = -v -s
+            """)[1:])
