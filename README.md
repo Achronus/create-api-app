@@ -1,5 +1,3 @@
-__Note: this project works with `SQL` but not `Mongo` (yet)! Mongo files will be added soon!__
-
 # Create API App Quickstart Tool
 
 Welcome to the quickstart tool for creating a `FastAPI` project with a `NextJS` frontend.
