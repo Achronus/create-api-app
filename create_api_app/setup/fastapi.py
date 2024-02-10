@@ -7,9 +7,6 @@ from .base import ControllerBase
 from ..conf.constants import SQL_PACKAGES, MONGO_PACKAGES
 from ..conf.constants.filepaths import AssetFilenames, get_db_type
 
-from rich.console import Console
-
-c = Console()
 
 class FastAPIFileController(ControllerBase):
     """A FastAPI file creation controller."""
