@@ -1,36 +1,36 @@
-from sqlalchemy.orm import Session
+from ..db.models import ItemModel
 
-from . import models, schemas
-
-
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+from bson import ObjectId
+from pymongo.errors import DuplicateKeyError
+from motor.core import AgnosticClient
 
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+async def add(client: AgnosticClient, name: str, document: ItemModel) -> str:
+    """Inserts a document into the given collection name."""
+    try:
+        result = await client[name].insert_one(document.model_dump())
+        return str(result.inserted_id)
+    except DuplicateKeyError:
+        print("An item with this name already exists.")
 
 
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+async def get(client: AgnosticClient, name: str, id: str) -> dict:
+    return await client[name].find_one({"_id": ObjectId(id)})
 
 
-def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+async def update(client: AgnosticClient, name: str, id: str, update_values: dict) -> dict:
+    try:
+        await client[name].update_one({"_id": ObjectId(id)}, {"$set": update_values})
+        return get(name, id)
+    except DuplicateKeyError:
+        print("An item with this name already exists.")
 
 
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
+async def delete(client: AgnosticClient, name: str, id: str) -> dict:
+    await client[name].delete_one({"_id": ObjectId(id)})
+    return {"status": "Item deleted."}
 
 
-def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-    db_item = models.Item(**item.model_dump(), owner_id=user_id)
-    db.add(db_item)
-    db.commit()
-    db.refresh(db_item)
-    return db_item
+async def get_multiple(client: AgnosticClient, name: str, limit: int = 10) -> list[dict]:
+    cursor = client[name].find().limit(limit)
+    return await cursor.to_list(length=limit)

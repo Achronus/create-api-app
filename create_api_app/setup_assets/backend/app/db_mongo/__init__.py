@@ -1,15 +1,15 @@
-import os
-from dotenv import load_dotenv
+from ..config.settings import settings
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from motor.core import AgnosticClient
+from motor.motor_asyncio import AsyncIOMotorClient
 
-load_dotenv()
 
-engine = create_engine(
-    os.getenv('DATABASE_URL')
-)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+class Database:
+    client: AsyncIOMotorClient = None
 
-Base = declarative_base()
+db = Database()
+
+
+def get_db() -> AgnosticClient:
+    """Retrieve the database client."""
+    return db.client[settings.DB_NAME]

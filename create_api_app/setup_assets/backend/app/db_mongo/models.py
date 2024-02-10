@@ -1,26 +1,53 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from typing import Optional
 
-from . import Base
-
-
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-
-    items = relationship("Item", back_populates="owner")
+from pydantic import BaseModel, Field
+from beanie import Document, Indexed
 
 
-class Item(Base):
-    __tablename__ = "items"
+class ItemModel(Document):
+    """Container for a single Item."""
+    name: str = Indexed(str, unique=True)
+    description: str = Field(...)
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "Demo item",
+                "description": "This is a demo item. Use it wisely!",
+            }
+        }
 
-    owner = relationship("User", back_populates="items")
+
+class UpdateItemModel(BaseModel):
+    """A container for updating a Item in the database."""
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "Demo item",
+                "description": "This is a demo item. Use it wisely!",
+            }
+        }
+
+
+class ItemCollection(BaseModel):
+    """A container holding a list of `ItemModel` instances."""
+    items: list[ItemModel]
+
+
+def ResponseModel(data: list[dict], message: str) -> dict:
+    return {
+        "data": [data],
+        "code": 200,
+        "message": message
+    }
+
+
+def ErrorResponseModel(error: str, code: int, message: str) -> dict:
+    return {
+        "error": error,
+        "code": code,
+        "message": message
+    }
