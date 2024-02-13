@@ -117,6 +117,21 @@ docker container rm creating_project -f
 docker container rm creating_project -f && docker image rm create_api_app -f
 ```
 
+### Docker Hub (Recommended)
+
+Alternatively, you can download the docker image from the hub (remember to replace `<project_name>` and `<path>` with a custom one!):
+
+```bash
+# Get the image
+docker pull achronus/create_api_app:latest
+
+# Run the tool using a container
+docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project create_api_app
+
+# Copy files from container to local device
+docker cp creating_project:/app/<project_name> <path>/<project_name>
+```
+
 In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
 
 _❗ Note: We use the `-it` flag to display colour formatting for the console, use `creating_project` as the container name and `create_api_app` as the image name._
