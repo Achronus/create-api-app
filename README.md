@@ -118,7 +118,7 @@ To get started, pull the image from docker hub and run the docker commands (repl
 docker pull achronus/create_api_app:latest
 
 # Run the tool using a container
-docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project create_api_app
+docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project achronus/create_api_app
 
 # Copy files from container to local device
 docker cp creating_project:/app/<project_name> <path>/<project_name>
@@ -128,15 +128,15 @@ docker cp creating_project:/app/<project_name> <path>/<project_name>
 
 ```bash
 # Remove container only
-docker container rm creating_project -f
+docker container rm achronus/creating_project -f
 
 # Remove container and image
-docker container rm creating_project -f && docker image rm create_api_app -f
+docker container rm creating_project -f && docker image rm achronus/create_api_app -f
 ```
 
 In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
 
-_❗ Note: We use the `-it` flag to display colour formatting for the console, use `creating_project` as the container name and `create_api_app` as the image name._
+_❗ Note: We use the `-it` flag to display colour formatting for the console, and use `creating_project` as the container name._
 
 ### Local Install
 
