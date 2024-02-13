@@ -128,7 +128,7 @@ docker cp creating_project:/app/<project_name> <path>/<project_name>
 
 ```bash
 # Remove container only
-docker container rm achronus/creating_project -f
+docker container rm creating_project -f
 
 # Remove container and image
 docker container rm creating_project -f && docker image rm achronus/create_api_app -f
