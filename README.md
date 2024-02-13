@@ -8,6 +8,26 @@ Creating a project from scratch can be a tedious process. Not only do you have t
 
 I use this tool personally for `SaaS` and `ML API` projects and have found it extremely useful for immediately diving into coding without faffing around with setup details (except for configuring API keys). Hopefully, it's useful to you too!
 
+## Contents
+- [Create API App Quickstart Tool](#create-api-app-quickstart-tool)
+  - [Why This Tool?](#why-this-tool)
+  - [Contents](#contents)
+  - [The Stack](#the-stack)
+    - [Backend](#backend)
+      - [Production](#production)
+      - [Development](#development)
+    - [Frontend](#frontend)
+  - [Dependencies](#dependencies)
+  - [Customisation and Configuration](#customisation-and-configuration)
+    - [Database](#database)
+  - [Using The Tool](#using-the-tool)
+    - [Docker Hub (Recommended)](#docker-hub-recommended)
+    - [Local Install](#local-install)
+  - [Starting A Created Project](#starting-a-created-project)
+    - [Running Unit Tests In Development](#running-unit-tests-in-development)
+    - [Moving To Production](#moving-to-production)
+    - [Folder Structure](#folder-structure)
+
 ## The Stack
 
 All projects are created using the same stack. To maintain a consistent template, and keep things simple, we've limited the customisation to one parameter: a `DATABASE_URL`. Refer to the [Customisation and Configuration](#customisation-and-configuration) section for more details.
@@ -89,16 +109,13 @@ When modifiying the `PYTHON_VERSION`, be aware there are two variables: one for 
 ## Using The Tool
 _❔ Not got Docker? Follow these instructions from the [Docker website](https://docs.docker.com/get-docker/)_.
 
-### Local Install
+### Docker Hub (Recommended)
 
-1. To get started, clone the repository, enter the folder and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
+To get started, pull the image from docker hub and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
 
 ```bash
-git clone https://github.com/Achronus/create-api-app.git
-cd create-api-app
-
-# Build the image
-docker build -t create_api_app .
+# Get the image
+docker pull achronus/create_api_app:latest
 
 # Run the tool using a container
 docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project create_api_app
@@ -117,13 +134,20 @@ docker container rm creating_project -f
 docker container rm creating_project -f && docker image rm create_api_app -f
 ```
 
-### Docker Hub (Recommended)
+In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
 
-Alternatively, you can download the docker image from the hub (remember to replace `<project_name>` and `<path>` with a custom one!):
+_❗ Note: We use the `-it` flag to display colour formatting for the console, use `creating_project` as the container name and `create_api_app` as the image name._
+
+### Local Install
+
+Alternatively, if you are looking to amend the tool yourself, you can locally download the tool. Simply, clone the repo, build the image yourself and then run the tool using a container.
 
 ```bash
-# Get the image
-docker pull achronus/create_api_app:latest
+git clone https://github.com/Achronus/create-api-app.git
+cd create-api-app
+
+# Build the image
+docker build -t create_api_app .
 
 # Run the tool using a container
 docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_project create_api_app
@@ -131,10 +155,6 @@ docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_pro
 # Copy files from container to local device
 docker cp creating_project:/app/<project_name> <path>/<project_name>
 ```
-
-In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
-
-_❗ Note: We use the `-it` flag to display colour formatting for the console, use `creating_project` as the container name and `create_api_app` as the image name._
 
 ## Starting A Created Project
 
