@@ -111,7 +111,11 @@ _❔ Not got Docker? Follow these instructions from the [Docker website](https:/
 
 ### Docker Hub (Recommended)
 
-To get started, pull the image from docker hub and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
+To get started, follow either 1 or 2 below -
+
+_❗ Note: We use the `-it` flag to display colour formatting for the console, and use `creating_project` as the container name._
+
+1. Pull the image from docker hub and run the docker commands (replacing `<project_name>` and `<path>` with a custom one!):
 
 ```bash
 # Get the image
@@ -122,21 +126,46 @@ docker run -it -e PROJECT_NAME=<project_name> -e DB_TYPE=sql --name creating_pro
 
 # Copy files from container to local device
 docker cp creating_project:/app/<project_name> <path>/<project_name>
-```
 
-2. Cleanup files (optional):
-
-```bash
-# Remove container only
-docker container rm creating_project -f
-
-# Remove container and image
+# Cleanup
 docker container rm creating_project -f && docker image rm achronus/create_api_app -f
 ```
 
-In your terminal, you should get feedback from the container stating the progress of the projects creation. Once complete, use the `cp` command to copy the project to your desired location and then tweak it as need. 
+2. Use a shell script. For example, name it `create_api_app.sh` and update the variables `PROJECT_NAME`, `DB_TYPE`, and `TARGET_PATH`:
 
-_❗ Note: We use the `-it` flag to display colour formatting for the console, and use `creating_project` as the container name._
+```bash
+#!/bin/bash
+#------------------------------------------------------------------
+# Define variables
+# https://github.com/Achronus/create-api-app
+IMAGE_NAME="achronus/create_api_app"
+CONTAINER_NAME="creating_project"
+
+PROJECT_NAME="my_awesome_api"
+DB_TYPE="sql"  # Options: ["sql", "mongo"]
+TARGET_PATH="."  # Current directory
+#------------------------------------------------------------------
+# Get image
+docker pull $IMAGE_NAME:latest
+
+# Run the tool using a container
+docker run -it -e PROJECT_NAME=$PROJECT_NAME -e DB_TYPE=$DB_TYPE --name $CONTAINER_NAME $IMAGE_NAME
+
+# Copy files from container to local device
+docker cp $CONTAINER_NAME:/app/$PROJECT_NAME $TARGET_PATH/$PROJECT_NAME
+
+# Cleanup
+docker container rm $CONTAINER_NAME -f && docker image rm $IMAGE_NAME -f
+```
+
+Run it with:
+```bash
+./create_api_app.sh
+
+# OR
+
+sh create_api_app.sh
+```
 
 ### Local Install
 
