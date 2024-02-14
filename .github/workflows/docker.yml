@@ -1,12 +1,11 @@
 name: Docker Setup
 
 on:
-  workflow_run:
-    workflows: ["tests.yml"]
-    types:
-    - completed
-    branches: 
-    - main
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
 
 jobs:
   build_and_push:
