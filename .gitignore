@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+create_api_app.sh
 
 # Spyder project settings
 .spyderproject
