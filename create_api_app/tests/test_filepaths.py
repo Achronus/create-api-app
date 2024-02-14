@@ -12,14 +12,13 @@ from conf.constants.filepaths import (
 from conf.constants import STATIC_DIR_NAME
 
 PROJECT_NAME = 'test_project'
+SETUP_ROOT = 'create_api_app'
 
 set_project_name(PROJECT_NAME)
 CUSTOM_PROJECT_PARENT = get_project_name()
 CUSTOM_PROJECT_ROOT = os.path.join(CUSTOM_PROJECT_PARENT)
 CUSTOM_PROJECT_BACKEND = os.path.join(CUSTOM_PROJECT_PARENT, 'backend')
 CUSTOM_PROJECT_STATIC = os.path.join(CUSTOM_PROJECT_ROOT, 'frontend', STATIC_DIR_NAME)
-
-SETUP_ROOT = 'create_api_app'
 
 
 @pytest.fixture
@@ -86,7 +85,7 @@ class TestSetupDirPaths:
     def test_root_valid(self) -> None:
         self.__validate_path(
             SetupDirPaths.ROOT, 
-            SETUP_ROOT
+            os.path.dirname(SETUP_ROOT)
         )
 
     def test_setup_root_valid(self) -> None:

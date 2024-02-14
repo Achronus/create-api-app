@@ -99,9 +99,6 @@ class DockerContent:
         ########################################
         FROM python:${{BUILD_VERSION}}-alpine as base
 
-        ARG PROJECT_NAME
-        ENV PROJECT_NAME=${{PROJECT_NAME}}
-
         # Set working directory
         WORKDIR /app
 
@@ -143,8 +140,7 @@ class DockerContent:
             PORT && \\
             ENV_MODE
 
-        ENV PROJECT_NAME=${{PROJECT_NAME}} \\
-            PACKAGE_DIR=/usr/local/lib/python${{PYTHON_VERSION}}/site-packages \\
+        ENV PACKAGE_DIR=/usr/local/lib/python${{PYTHON_VERSION}}/site-packages \\
             PORT=${{PORT}} \\
             ENV_MODE=${{ENV_MODE}}
 
@@ -171,9 +167,6 @@ class DockerContent:
         # --- Base ---
         ########################################
         FROM oven/bun:${BUILD_VERSION}-alpine as base
-
-        ARG PROJECT_NAME
-        ENV PROJECT_NAME=${PROJECT_NAME}
 
         # Set working directory
         WORKDIR /app
@@ -257,7 +250,6 @@ class DockerContent:
               dockerfile: Dockerfile.backend
               args:
                 POETRY_VERSION: ${POETRY_VERSION}
-                PROJECT_NAME: ${PROJECT_NAME}
                 PORT: ${BAK_PORT}
                 PYTHON_VERSION: ${PYTHON_SITE_PACKAGES_VERSION}
                 BUILD_VERSION: ${PYTHON_BUILD_VERSION}
@@ -274,7 +266,6 @@ class DockerContent:
               dockerfile: Dockerfile.frontend
               target: development
               args:
-                PROJECT_NAME: ${PROJECT_NAME}
                 PORT: ${FNT_PORT}
                 BUILD_VERSION: ${BUN_VERSION}
             ports:
