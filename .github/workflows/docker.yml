@@ -1,11 +1,6 @@
 name: Docker Setup
 
-on:
-  push:
-    tags:
-      - 'v*'
-    branches:
-      - main
+on: release
 
 jobs:
   build_and_push:
