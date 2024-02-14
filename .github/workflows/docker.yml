@@ -1,6 +1,8 @@
 name: Docker Setup
 
-on: release
+on: 
+  release:
+    types: [published]
 
 jobs:
   build_and_push:
