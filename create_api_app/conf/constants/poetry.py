@@ -1,22 +1,11 @@
 from .filepaths import AssetFilenames
 
 
-# Define Poetry script commands
-class PoetryCommands:
+class PoetryContent:
+    """A helper class for retrieving content for the Poetry installation."""
+
     def __init__(self) -> None:
         self.START_SERVER_CMD = f"{AssetFilenames.BUILD.split('.')[0]}:start"
-
-# Define Poetry script content
-# Specific to setup/venv.py -> init_project()
-class PoetryContent:
-    def __init__(self) -> None:
-        self.commands = PoetryCommands()
-
-        self.SCRIPT_INSERT_LOC = 'readme = "README.md"'
-        self.SCRIPT_CONTENT = '\n'.join([
-            "[tool.poetry.scripts]",
-            f'run = "{self.commands.START_SERVER_CMD}"'
-        ])
 
         self.start_desc = '"""Start the server."""'
         self.BUILD_FILE_CONTENT = f"""
@@ -46,3 +35,12 @@ class PoetryContent:
             args = parser.parse_args()
             start(args.env)
         """
+
+    def pyproject_desc(self) -> str:
+        return 'description = "A FastAPI backend for processing API data and passing it to the frontend."'
+
+    def pyproject_author(self) -> str:
+        return "rpartridge101@gmail.com"
+
+    def pyproject_scripts(self) -> str:
+        return f'\n\n[tool.poetry.scripts]\nrun = "{self.START_SERVER_CMD}"\n\n'
