@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from .conf.constants.filepaths import set_project_name, set_db_type
+from .conf.constants.filepaths import set_project_name
 from .setup import run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
@@ -16,42 +16,24 @@ app = typer.Typer(rich_markup_mode="rich")
 console = Console()
 
 
-def db_type_choices(value: str) -> str:
-    """Callback function for the `db_type` parameter in `main()`."""
-    valid_choices = ['sql', 'mongo']
-
-    if value not in valid_choices:
-        raise typer.BadParameter(f"Invalid choice: '{value}'. Valid choices are: [{', '.join(valid_choices)}].")
-    return value
-
-
 @app.command()
 def main(
-        name: Annotated[str, typer.Argument(
-            help="The name of the project", 
-            show_default=False
-        )], 
-        db_type: Annotated[str, typer.Argument(
-            help="The projects database type. Options ['sql', 'mongo']", 
-            show_default=True, 
-            metavar="DB_TYPE", 
-            rich_help_panel="Secondary Arguments", 
-            callback=db_type_choices
-        )] = 'sql'
-    ) -> None:
+    name: Annotated[
+        str, typer.Argument(help="The name of the project", show_default=False)
+    ],
+) -> None:
     """Create a FastAPI and NextJS project with NAME and an optional DB_URL."""
     name = strip_whitespace_and_dashes(name)
     path = os.path.join(os.getcwd(), name)
 
     # Store arguments as env variables
     set_project_name(name)
-    set_db_type(db_type.lower())
 
     # Provide pretty print formats
-    name_print = f'[purple]{name}[/purple]'
-    access_print = f'[dark_goldenrod]docker cp creating_project:/app/{name} {os.path.join(os.getcwd(), name)}[/dark_goldenrod]'
+    name_print = f"[magenta]{name}[/magenta]"
+    access_print = f"[dark_goldenrod]docker cp creating_project:/app/{name} {os.path.join(os.getcwd(), name)}[/dark_goldenrod]"
 
-    console.print(project_table(name, db_type))
+    console.print(project_table(name, "MongoDB"))
 
     # Replace project if exists
     if os.path.exists(path):
@@ -72,5 +54,5 @@ def main(
     console.print(f"Access {name_print} with {access_print}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app()

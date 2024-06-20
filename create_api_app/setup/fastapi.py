@@ -4,16 +4,16 @@ import subprocess
 import textwrap
 
 from .base import ControllerBase
-from ..conf.constants import SQL_PACKAGES, MONGO_PACKAGES
-from ..conf.constants.filepaths import AssetFilenames, get_db_type
+from create_api_app.conf.constants.filepaths import AssetFilenames
 
 
 class FastAPIFileController(ControllerBase):
     """A FastAPI file creation controller."""
+
     def __init__(self) -> None:
         tasks = [
             (self.check_db, "Configuring [red]database[/red] files"),
-            (self.configure_tests, "Configuring [yellow]test[/yellow] files")
+            (self.configure_tests, "Configuring [yellow]test[/yellow] files"),
         ]
 
         super().__init__(tasks)
