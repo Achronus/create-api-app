@@ -9,7 +9,7 @@ from .base import ControllerBase
 
 
 class StaticAssetsController(ControllerBase):
-    """A controller for handling the backends static assets."""
+    """A controller for handling the static assets."""
 
     def __init__(self, project_paths: ProjectPaths = None) -> None:
         tasks = [

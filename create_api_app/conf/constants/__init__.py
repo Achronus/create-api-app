@@ -6,7 +6,7 @@ BACKEND_CORE_PACKAGES = [
     "beanie",
 ]
 
-# Development backend packages to install
+# Define dev backend packages
 BACKEND_DEV_PACKAGES = [
     "pytest",
     "pytest-cov",
@@ -19,6 +19,3 @@ BACKEND_DEV_PACKAGES = [
 PASS = "[green]\u2713[/green]"
 FAIL = "[red]\u274c[/red]"
 PARTY = ":party_popper:"
-
-# Set default static directory name
-STATIC_DIR_NAME = "public"

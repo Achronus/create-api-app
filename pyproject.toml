@@ -6,12 +6,14 @@ authors = ["Ryan Partridge <rpartridge101@yahoo.co.uk>"]
 readme = "README.md"
 
 [tool.poetry.scripts]
-create = "create_api_app.main:app"
+create-api-app = "create_api_app.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.12"
 typer = {extras = ["all"], version = "^0.12.3"}
 pytest = "^8.2.2"
+build_nextjs_app = "^1.0.2"
+docker = "^7.1.0"
 
 
 [build-system]

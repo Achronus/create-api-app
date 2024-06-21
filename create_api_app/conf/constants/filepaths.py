@@ -1,7 +1,5 @@
 import os
 
-from . import STATIC_DIR_NAME
-
 
 # Setup assets directory names
 class SetupAssetsDirNames:
@@ -63,10 +61,6 @@ class ProjectPaths:
 
         self.POETRY_CONF = os.path.join(self.BACKEND, AssetFilenames.POETRY_CONF)
         self.BACKEND_BUILD = os.path.join(self.BACKEND, AssetFilenames.BUILD)
-
-        self.STATIC = os.path.join(
-            self.ROOT, SetupAssetsDirNames.FRONTEND, STATIC_DIR_NAME
-        )
 
         self.BACKEND_TESTS = os.path.join(self.BACKEND, "tests")
         self.PYTEST_INI = os.path.join(self.BACKEND, "pytest.ini")

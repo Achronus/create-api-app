@@ -6,6 +6,7 @@ from .setup import run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
 
+import docker
 import typer
 from typing_extensions import Annotated
 from rich.console import Console
@@ -16,6 +17,17 @@ app = typer.Typer(rich_markup_mode="rich")
 console = Console()
 
 
+def check_docker_running(console: Console) -> None:
+    try:
+        client = docker.from_env()
+        client.version()
+    except docker.errors.DockerException:
+        console.print(
+            "[red]Error[/red]: please start the [cyan]Docker Engine[/cyan] first!"
+        )
+        raise typer.Abort()
+
+
 @app.command()
 def main(
     name: Annotated[
@@ -23,6 +35,8 @@ def main(
     ],
 ) -> None:
     """Create a FastAPI and NextJS project with NAME and an optional DB_URL."""
+    check_docker_running(console)
+
     name = strip_whitespace_and_dashes(name)
     path = os.path.join(os.getcwd(), name)
 
