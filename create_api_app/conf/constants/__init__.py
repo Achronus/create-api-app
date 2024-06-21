@@ -22,14 +22,3 @@ PARTY = ":party_popper:"
 
 # Set default static directory name
 STATIC_DIR_NAME = "public"
-
-# Set template environment variables
-BACKEND_ENV_VARIABLES = [
-    "DB_URL=",
-]
-
-FRONTEND_ENV_VARIABLES = [
-    "UPLOADTHING_SECRET=",
-    "NEXT_PUBLIC_UPLOADTHING_APP_ID=",
-    "\nAPI_URL=",
-]

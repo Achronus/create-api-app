@@ -4,7 +4,7 @@ import subprocess
 
 from create_api_app.conf.constants import BACKEND_CORE_PACKAGES, BACKEND_DEV_PACKAGES
 from create_api_app.conf.constants.filepaths import ProjectPaths, set_poetry_version
-from create_api_app.conf.constants.poetry import PoetryContent
+from create_api_app.conf.constants.backend import PoetryContent
 from create_api_app.conf.file_handler import insert_into_file, replace_content
 from .base import ControllerBase
 

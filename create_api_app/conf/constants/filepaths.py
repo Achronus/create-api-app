@@ -17,15 +17,8 @@ class AssetFilenames:
     POETRY_CONF = "pyproject.toml"
     README = "README.md"
 
-    LOCAL_ENV = ".env.local"
-    PROD_ENV = ".env"
-
     MAIN = "main.py"
     BUILD = "build.py"
-
-    MAIN_SQL = "main_sql.py"
-    MAIN_MONGO = "main_mongo.py"
-    DEPENDENCIES = "dependencies.py"
 
 
 # Setup assets filepaths
@@ -78,24 +71,3 @@ class ProjectPaths:
         self.BACKEND_TESTS = os.path.join(self.BACKEND, "tests")
         self.PYTEST_INI = os.path.join(self.BACKEND, "pytest.ini")
         self.PACKAGE_JSON = os.path.join(self.FRONTEND, "package.json")
-
-
-# Dockerfile specific directory and filename filepaths
-class DockerPaths:
-    def __init__(self) -> None:
-        self.df = "Dockerfile"
-        self.compose = "docker-compose"
-
-        self._yml_ext = ".yml"
-        self.PROJECT_ROOT = os.getcwd()
-
-        self.BACKEND_DF = os.path.join(self.PROJECT_ROOT, f"{self.df}.backend")
-        self.FRONTEND_DF = os.path.join(self.PROJECT_ROOT, f"{self.df}.frontend")
-        self.IGNORE = os.path.join(self.PROJECT_ROOT, ".dockerignore")
-
-        self.COMPOSE_MAIN = os.path.join(
-            self.PROJECT_ROOT, f"{self.compose}{self._yml_ext}"
-        )
-        self.COMPOSE_PROD = os.path.join(
-            self.PROJECT_ROOT, f"{self.compose}.prod{self._yml_ext}"
-        )
