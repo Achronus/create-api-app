@@ -25,6 +25,10 @@ class SetupDirPaths:
     SETUP_ROOT = os.path.join(ROOT, "create_api_app")
     ASSETS = os.path.join(SETUP_ROOT, SetupAssetsDirNames.ROOT)
 
+    BACKEND_ASSETS = os.path.join(ASSETS, SetupAssetsDirNames.BACKEND)
+    FRONTEND_ASSETS = os.path.join(ASSETS, SetupAssetsDirNames.FRONTEND)
+    ROOT_ASSETS = os.path.join(ASSETS, "root")
+
 
 def __dotenv_setter(name: str, value: str) -> None:
     os.environ[name] = value

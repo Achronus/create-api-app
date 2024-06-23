@@ -1,6 +1,9 @@
 import os
 import shutil
 
+from create_api_app.setup.nextjs import NextJSController
+from create_api_app.setup.backend import VEnvController, BackendStaticAssetController
+
 from .conf.constants.filepaths import set_project_name
 from .setup import run_tasks
 from .utils.helper import strip_whitespace_and_dashes
@@ -15,6 +18,29 @@ from rich.console import Console
 app = typer.Typer(rich_markup_mode="rich")
 
 console = Console()
+
+
+BACKEND_TASKS = [
+    (VEnvController, "Creating [yellow]Poetry[/yellow] project..."),
+    (
+        BackendStaticAssetController,
+        "Adding core [cyan]backend[/cyan] assets...",
+    ),
+]
+
+
+def handle_existing(name: str) -> None:
+    name = typer.style(f"'{name}'", fg=typer.colors.MAGENTA)
+    exists = typer.style("exists", fg=typer.colors.RED)
+    overwrite = typer.style("overwrite", fg=typer.colors.YELLOW)
+
+    delete = typer.confirm(
+        f"A project with the name {name} already {exists}! Do you want to {overwrite} it?"
+    )
+
+    if not delete:
+        console.print("\n[dark_goldenrod]No changes made.[/dark_goldenrod]")
+        raise typer.Abort()
 
 
 def check_docker_running(console: Console) -> None:
@@ -51,21 +77,35 @@ def main(
 
     # Replace project if exists
     if os.path.exists(path):
+        handle_existing(name)
         console.print(f"\nRemoving {name_print} and creating a new one...\n")
         shutil.rmtree(path)
     else:
-        console.print(f"\nCreating project {name_print}...\n")
+        console.print(f"\nCreating project {name_print}...")
 
     # Create and move into directory
     os.makedirs(path)
     os.chdir(path)
 
-    # Run task handler
-    run_tasks()
+    # Run application
+    console.print("  Steps to complete:")
+    console.print("    1. [yellow]Backend creation[/yellow]")
+    console.print("    2. [green]Frontend creation[/green]")
+    console.print("    3. [cyan]File cleanup[/cyan]\n")
+
+    console.print("Performing step: [yellow]1[/yellow]/[cyan]3[/cyan]\n")
+    run_tasks(
+        tasks=BACKEND_TASKS,
+        console=console,
+    )
+
+    console.print("\nPerforming step: [green]2[/green]/[cyan]3[/cyan]")
 
     # End of script
     console.print(project_complete_panel())
-    console.print(f"Access {name_print} with {access_print}")
+    console.print(
+        f"Access the project files here [link={os.getcwd()}]{name_print}[/link]\n"
+    )
 
 
 if __name__ == "__main__":

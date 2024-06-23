@@ -3,7 +3,7 @@ import pytest
 
 from create_api_app.conf.constants import BACKEND_CORE_PACKAGES, BACKEND_DEV_PACKAGES
 from create_api_app.conf.constants.filepaths import ProjectPaths
-from create_api_app.setup.venv import VEnvController
+from create_api_app.setup.backend import VEnvController
 from tests.mappings.pytoml import TOML_DESCRIPTION
 
 
@@ -13,13 +13,38 @@ def project_name() -> str:
 
 
 @pytest.fixture
-def backend_dir(project_name: str) -> str:
-    return os.path.join(os.getcwd(), project_name, "backend")
+def project_dir(project_name: str) -> str:
+    return os.path.join(os.getcwd(), project_name)
 
 
 @pytest.fixture
-def frontend_dir(project_name: str) -> str:
-    return os.path.join(os.getcwd(), project_name, "frontend")
+def backend_dir(project_dir: str) -> str:
+    return os.path.join(project_dir, "backend")
+
+
+@pytest.fixture
+def frontend_dir(project_dir: str) -> str:
+    return os.path.join(project_dir, "frontend")
+
+
+@pytest.fixture
+def asset_dir() -> str:
+    return os.path.join(os.getcwd(), "create_api_app", "setup_assets")
+
+
+def get_filepaths(dir_filepath: str) -> list[str]:
+    files = []
+    for file in os.listdir(dir_filepath):
+        sub_file = os.path.join(dir_filepath, file)
+        if os.path.isdir(sub_file):
+            sub_files = os.listdir(sub_file)
+
+            for f in sub_files:
+                files.append(os.path.join(sub_file, f))
+
+        files.append(sub_file)
+
+    return files
 
 
 class TestInitConfig:
@@ -89,3 +114,22 @@ class TestVEnvController:
                     break
 
         assert count == len(BACKEND_DEV_PACKAGES)
+
+
+class TestBackendStaticAssetController:
+    @staticmethod
+    def test_env_local_exists(project_dir: str):
+        filepath = os.path.join(project_dir, ".env.local")
+
+        if not os.path.exists(filepath):
+            assert False
+
+    @staticmethod
+    def test_backend_dir_valid(backend_dir: str, asset_dir: str):
+        setup_filepaths = get_filepaths(os.path.join(asset_dir, "backend")) + [
+            "poetry.lock",
+            "pyproject.toml",
+        ]
+        project_filepaths = get_filepaths(backend_dir)
+
+        assert len(setup_filepaths) == len(project_filepaths)

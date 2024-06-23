@@ -1,9 +1,15 @@
 import re
 import os
+import shutil
 import subprocess
 
 from create_api_app.conf.constants import BACKEND_CORE_PACKAGES, BACKEND_DEV_PACKAGES
-from create_api_app.conf.constants.filepaths import ProjectPaths, set_poetry_version
+from create_api_app.conf.constants.filepaths import (
+    ProjectPaths,
+    SetupAssetsDirNames,
+    SetupDirPaths,
+    set_poetry_version,
+)
 from create_api_app.conf.constants.backend import PoetryContent
 from create_api_app.conf.file_handler import insert_into_file, replace_content
 from .base import ControllerBase
@@ -100,3 +106,24 @@ class VEnvController(ControllerBase):
         )
 
         os.chdir(self.project_paths.ROOT)
+
+
+class BackendStaticAssetController(ControllerBase):
+    """A controller for managing the backend static assets."""
+
+    def __init__(self, project_paths: ProjectPaths = None) -> None:
+        tasks = [
+            (
+                self.move_setup_assets,
+                "Configuring [yellow]backend[/yellow] files",
+            ),
+        ]
+
+        super().__init__(tasks, project_paths)
+
+    def move_setup_assets(self) -> None:
+        """Moves the items in the `setup_assets` folder into the project directory."""
+        backend_path = os.path.join(os.getcwd(), SetupAssetsDirNames.BACKEND)
+        shutil.copytree(SetupDirPaths.BACKEND_ASSETS, backend_path, dirs_exist_ok=True)
+
+        shutil.copytree(SetupDirPaths.ROOT_ASSETS, os.getcwd(), dirs_exist_ok=True)
