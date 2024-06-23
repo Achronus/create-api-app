@@ -10,7 +10,7 @@ from create_api_app.conf.constants.filepaths import (
     SetupDirPaths,
     set_poetry_version,
 )
-from create_api_app.conf.constants.backend import PoetryContent
+from create_api_app.conf.constants.content import PoetryContent
 from create_api_app.conf.file_handler import insert_into_file, replace_content
 from .base import ControllerBase
 

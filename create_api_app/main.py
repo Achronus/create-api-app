@@ -1,11 +1,16 @@
 import os
 import shutil
+import time
 
-from create_api_app.setup.nextjs import NextJSController
+from create_api_app.setup.clean import CleanupController
+from create_api_app.setup.frontend import (
+    FrontendStaticAssetController,
+    NextJSController,
+)
 from create_api_app.setup.backend import VEnvController, BackendStaticAssetController
 
 from .conf.constants.filepaths import set_project_name
-from .setup import run_tasks
+from .setup import run_frontend_tasks, run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
 
@@ -24,8 +29,12 @@ BACKEND_TASKS = [
     (VEnvController, "Creating [yellow]Poetry[/yellow] project..."),
     (
         BackendStaticAssetController,
-        "Adding core [cyan]backend[/cyan] assets...",
+        "Adding core [yellow]backend[/yellow] assets...",
     ),
+]
+
+FRONTEND_TASKS = [
+    (FrontendStaticAssetController, "Updating [green]frontend[/green] assets..."),
 ]
 
 
@@ -41,6 +50,16 @@ def handle_existing(name: str) -> None:
     if not delete:
         console.print("\n[dark_goldenrod]No changes made.[/dark_goldenrod]")
         raise typer.Abort()
+
+
+def check_project_deleted(path: str) -> None:
+    deleted = False
+
+    while not deleted:
+        if not os.path.exists(path):
+            deleted = True
+
+    time.sleep(5)
 
 
 def check_docker_running(console: Console) -> None:
@@ -71,7 +90,6 @@ def main(
 
     # Provide pretty print formats
     name_print = f"[magenta]{name}[/magenta]"
-    access_print = f"[dark_goldenrod]docker cp creating_project:/app/{name} {os.path.join(os.getcwd(), name)}[/dark_goldenrod]"
 
     console.print(project_table(name, "MongoDB"))
 
@@ -80,6 +98,7 @@ def main(
         handle_existing(name)
         console.print(f"\nRemoving {name_print} and creating a new one...\n")
         shutil.rmtree(path)
+        check_project_deleted(path)
     else:
         console.print(f"\nCreating project {name_print}...")
 
@@ -88,18 +107,29 @@ def main(
     os.chdir(path)
 
     # Run application
-    console.print("  Steps to complete:")
+    console.print("  Stages to complete:")
     console.print("    1. [yellow]Backend creation[/yellow]")
     console.print("    2. [green]Frontend creation[/green]")
     console.print("    3. [cyan]File cleanup[/cyan]\n")
 
-    console.print("Performing step: [yellow]1[/yellow]/[cyan]3[/cyan]\n")
+    console.print("Performing stage: [yellow]1[/yellow]/[cyan]3[/cyan]\n")
     run_tasks(
         tasks=BACKEND_TASKS,
         console=console,
     )
 
-    console.print("\nPerforming step: [green]2[/green]/[cyan]3[/cyan]")
+    console.print("\nPerforming stage: [green]2[/green]/[cyan]3[/cyan]")
+    run_frontend_tasks(
+        container_controller=NextJSController(),
+        other_tasks=FRONTEND_TASKS,
+        console=console,
+    )
+
+    # console.print("\nPerforming stage: [cyan]3[/cyan]/[cyan]3[/cyan]")
+    # run_tasks(
+    #     tasks=[(CleanupController, "Cleaning project...")],
+    #     console=console,
+    # )
 
     # End of script
     console.print(project_complete_panel())

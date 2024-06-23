@@ -15,3 +15,18 @@ class PoetryContent:
 
     def pyproject_scripts(self) -> str:
         return f'\n\n[tool.poetry.scripts]\nrun = "{self.START_SERVER_CMD}"\n\n'
+
+
+class FrontendContent:
+    """A helper class for retrieving content for the frontend installation."""
+
+    def tailwind_font(self) -> str:
+        """New content for the `Rubik` font in the tailwind config."""
+        return "\n".join(
+            [
+                "extend: {",
+                "      fontFamily: {",
+                '        rubik: ["Rubik", "sans-serif"],',
+                "      },",
+            ]
+        )
