@@ -4,12 +4,12 @@ import pytest
 from create_api_app.conf.constants import BACKEND_CORE_PACKAGES, BACKEND_DEV_PACKAGES
 from create_api_app.conf.constants.filepaths import ProjectPaths
 from create_api_app.setup.backend import VEnvController
-from tests.mappings.pytoml import TOML_DESCRIPTION
+from tests.mappings import FRONTEND_ROOT_FILES, TOML_DESCRIPTION
 
 
 @pytest.fixture
 def project_name() -> str:
-    return "_pytest_demo"
+    return "_project_demo"
 
 
 @pytest.fixture
@@ -116,10 +116,24 @@ class TestVEnvController:
         assert count == len(BACKEND_DEV_PACKAGES)
 
 
-class TestBackendStaticAssetController:
+class TestBackendAssets:
     @staticmethod
     def test_env_local_exists(project_dir: str):
         filepath = os.path.join(project_dir, ".env.local")
+
+        if not os.path.exists(filepath):
+            assert False
+
+    @staticmethod
+    def test_gitignore_exists(project_dir: str):
+        filepath = os.path.join(project_dir, ".gitignore")
+
+        if not os.path.exists(filepath):
+            assert False
+
+    @staticmethod
+    def test_readme_exists(project_dir: str):
+        filepath = os.path.join(project_dir, "README.md")
 
         if not os.path.exists(filepath):
             assert False
@@ -133,3 +147,11 @@ class TestBackendStaticAssetController:
         project_filepaths = get_filepaths(backend_dir)
 
         assert len(setup_filepaths) == len(project_filepaths)
+
+
+class TestFrontendAssets:
+    @staticmethod
+    def test_root_files_exist(frontend_dir: str):
+        filepaths = get_filepaths(frontend_dir)
+
+        assert len(filepaths) == len(FRONTEND_ROOT_FILES)

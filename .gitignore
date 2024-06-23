@@ -36,4 +36,4 @@ create_api_app.sh
 /site
 
 # Local testing
-/_pytest_demo
+/_project_demo
