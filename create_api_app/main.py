@@ -125,11 +125,11 @@ def main(
         console=console,
     )
 
-    # console.print("\nPerforming stage: [cyan]3[/cyan]/[cyan]3[/cyan]")
-    # run_tasks(
-    #     tasks=[(CleanupController, "Cleaning project...")],
-    #     console=console,
-    # )
+    console.print("\nPerforming stage: [cyan]3[/cyan]/[cyan]3[/cyan]")
+    run_tasks(
+        tasks=[(CleanupController, "Cleaning project...")],
+        console=console,
+    )
 
     # End of script
     console.print(project_complete_panel())

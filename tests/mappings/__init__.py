@@ -13,17 +13,13 @@ TOML_DESCRIPTION = [
 
 FRONTEND_ROOT_FILES = [
     ".eslintrc.json",
-    ".gitignore",  # Cleanup
-    "bun.lockb",  # Cleanup
     "components.json",
-    "next-env.d.ts",
     "next.config.mjs",
     "package.json",
     "postcss.config.mjs",
     "public\\next.svg",
     "public\\vercel.svg",
     "public",
-    "README.md",  # Cleanup
     "src\\app",
     "src\\components",
     "src\\data",

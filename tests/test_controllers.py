@@ -2,7 +2,7 @@ import os
 import pytest
 
 from create_api_app.conf.constants import BACKEND_CORE_PACKAGES, BACKEND_DEV_PACKAGES
-from create_api_app.conf.constants.filepaths import ProjectPaths
+from create_api_app.conf.constants.filepaths import AssetFilenames, ProjectPaths
 from create_api_app.setup.backend import VEnvController
 from tests.mappings import FRONTEND_ROOT_FILES, TOML_DESCRIPTION
 
@@ -119,7 +119,7 @@ class TestVEnvController:
 class TestBackendAssets:
     @staticmethod
     def test_env_local_exists(project_dir: str):
-        filepath = os.path.join(project_dir, ".env.local")
+        filepath = os.path.join(project_dir, ".env.local.example")
 
         if not os.path.exists(filepath):
             assert False
@@ -155,3 +155,29 @@ class TestFrontendAssets:
         filepaths = get_filepaths(frontend_dir)
 
         assert len(filepaths) == len(FRONTEND_ROOT_FILES)
+
+    @staticmethod
+    def test_tailwind_valid(frontend_dir: str):
+        filepath = os.path.join(frontend_dir, AssetFilenames.TAILWIND)
+
+        with open(filepath, "r") as f:
+            lines = f.readlines()
+
+        lines = [line.strip() for line in lines]
+        valid = 'rubik: ["Rubik", "sans-serif"],' in set(lines)
+        assert valid
+
+    @staticmethod
+    def test_next_config_valid(frontend_dir: str):
+        filepath = os.path.join(frontend_dir, AssetFilenames.NEXT_CONFIG)
+
+        with open(filepath, "r") as f:
+            lines = f.readlines()
+
+        valid = False
+        for line in lines[:16]:
+            if line.startswith("loadEnv"):
+                valid = True
+                break
+
+        assert valid

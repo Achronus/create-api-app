@@ -18,7 +18,9 @@ class AssetFilenames:
 
     MAIN = "main.py"
     BUILD = "build.py"
+
     TAILWIND = "tailwind.config.ts"
+    NEXT_CONFIG = "next.config.mjs"
 
 
 class SetupDirPaths:
