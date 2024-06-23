@@ -8,7 +8,7 @@ If there are any issues using the tool, please flag them in the [issues](https:/
 
 Found on:
 
-- [PyPi](https://pypi.org/project/create_api_app/)
+- [PyPi](https://pypi.org/project/create-api-app/)
 - [GitHub](https://github.com/Achronus/create-api-app/)
 
 ## Why This Tool?

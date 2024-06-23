@@ -1,5 +1,7 @@
 import os
 
+from create_api_app.utils.helper import get_dirpaths
+
 
 class SetupAssetsDirNames:
     """A storage container for setup asset directory names."""
@@ -26,13 +28,11 @@ class AssetFilenames:
 class SetupDirPaths:
     """A storage container for setup asset filepaths."""
 
-    ROOT = os.path.dirname(os.path.join(os.getcwd(), SetupAssetsDirNames.ROOT))
-    SETUP_ROOT = os.path.join(ROOT, "create_api_app")
-    ASSETS = os.path.join(SETUP_ROOT, SetupAssetsDirNames.ROOT)
+    DIRPATHS_DICT = get_dirpaths("create_api_app", "setup_assets")
 
-    BACKEND_ASSETS = os.path.join(ASSETS, SetupAssetsDirNames.BACKEND)
-    FRONTEND_ASSETS = os.path.join(ASSETS, SetupAssetsDirNames.FRONTEND)
-    ROOT_ASSETS = os.path.join(ASSETS, "root")
+    BACKEND_ASSETS = DIRPATHS_DICT[SetupAssetsDirNames.BACKEND]
+    FRONTEND_ASSETS = DIRPATHS_DICT[SetupAssetsDirNames.FRONTEND]
+    ROOT_ASSETS = DIRPATHS_DICT["root"]
 
 
 def __dotenv_setter(name: str, value: str) -> None:
