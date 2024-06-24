@@ -1,0 +1,82 @@
+site_name: Create API App
+site_description: A quickstart tool for creating FastAPI projects with a NextJS frontend.
+site_url: https://create.achronus.dev/
+
+theme:
+  name: material
+  language: en
+  palette:
+    - scheme: slate
+      primary: light blue
+      accent: cyan
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.top
+    - navigation.sections
+    - navigation.path
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  logo: "assets/icon-white.png"
+  favicon: "favicon.ico"
+  icon:
+    repo: fontawesome/brands/github
+
+repo_name: Achronus/create-api-app
+repo_url: https://github.com/Achronus/create-api-app
+edit_uri: edit/main/docs
+
+extra_css:
+  - "assets/styles/icons.css"
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Getting Started: getting-started/index.md
+      - Installation: getting-started/installation.md
+      - Configuring The Project: getting-started/configure.md
+      - Running The Project: getting-started/run.md
+      - License: getting-started/license.md
+  - File Structure:
+      - File Structure: file-structure/index.md
+      - Frontend: file-structure/frontend.md
+      - Backend: file-structure/backend.md
+  - Customization:
+      - Customization: customization/index.md
+      - Styling: customization/styling.md
+      - Removing Unwanted Packages: customization/removal.md
+
+extra:
+  version:
+    provider: mike
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Achronus/create-api-app
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/create-api-app/
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      pygments_lang_class: true
+      auto_title: true
+      linenums: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+      title: Page Contents
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options:
+        custom_icons:
+          - docs/assets/icons
