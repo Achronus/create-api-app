@@ -68,3 +68,7 @@ class ProjectPaths:
         self.POETRY_CONF = os.path.join(self.BACKEND, AssetFilenames.POETRY_CONF)
 
         self.TAILWIND_CONF = os.path.join(self.FRONTEND, AssetFilenames.TAILWIND)
+
+        self.ENV_LOCAL = os.path.join(self.ROOT, ".env.local")
+        self.SETTINGS = os.path.join(self.BACKEND_APP, "config", "settings.py")
+        self.MODELS = os.path.join(self.BACKEND_APP, "models", "__init__.py")

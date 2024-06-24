@@ -7,7 +7,11 @@ from pydantic import BaseModel
 
 
 class ExampleDB(Document):
-    """The main model for database collection based on the database."""
+    """
+    The main model for your database collection. Should represent the structure of the data in the collection.
+
+    For more details check the [Beanie docs](https://beanie-odm.dev/).
+    """
 
     name: str
     desc: Optional[str] = None

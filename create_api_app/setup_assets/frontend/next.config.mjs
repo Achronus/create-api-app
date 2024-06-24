@@ -11,7 +11,7 @@ const loadEnv = (filePath) => {
 
 loadEnv(path.resolve(process.cwd(), ".env.local"));
 
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.FASTAPI_CONNECTION_URL;
 
 const nextConfig = {
   images: {

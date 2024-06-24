@@ -1,5 +1,6 @@
 import os
 import shutil
+import textwrap
 import time
 
 from create_api_app.setup.clean import CleanupController
@@ -9,7 +10,7 @@ from create_api_app.setup.frontend import (
 )
 from create_api_app.setup.backend import VEnvController, BackendStaticAssetController
 
-from .conf.constants.filepaths import set_project_name
+from .conf.constants.filepaths import ProjectPaths, set_project_name
 from .setup import run_frontend_tasks, run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
@@ -134,7 +135,17 @@ def main(
     # End of script
     console.print(project_complete_panel())
     console.print(
-        f"Access the project files here [link={os.getcwd()}]{name_print}[/link]\n"
+        f"Access the project files here [link={os.getcwd()}]{name_print}[/link]"
+    )
+
+    project_paths = ProjectPaths(name)
+    console.print(
+        textwrap.dedent(f"""
+    [dark_goldenrod]Not sure where to start?[/dark_goldenrod]
+      - [green][link={project_paths.ENV_LOCAL}].env.local[/link][/green] - Update your API keys
+      - [yellow][link={project_paths.SETTINGS}]config/settings.py[/link][/yellow] - Update the [yellow]DB_NAME[/yellow] and [yellow]DB_COLLECTION_NAME[/yellow] for your [green]MongoDB[/green] database
+      - [yellow][link={project_paths.MODELS}]models/__init__.py[/link][/yellow] - Update the [green]ExampleDB[/green] model\n
+    """)
     )
 
 

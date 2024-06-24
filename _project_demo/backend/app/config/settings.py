@@ -1,6 +1,6 @@
 import os
 
-from utils.fileloader import FileLoader
+from app.utils.fileloader import FileLoader
 
 
 class Settings:
@@ -10,8 +10,8 @@ class Settings:
     FILEPATHS = __fileloader.FILEPATHS
 
     DB_URL = os.getenv("DATABASE_URL")
-    DB_NAME = ""
-    DB_COLLECTION_NAME = ""
+    DB_NAME = ""  # Update me!
+    DB_COLLECTION_NAME = ""  # Update me!
 
 
 settings = Settings()

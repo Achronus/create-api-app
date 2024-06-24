@@ -7,7 +7,7 @@ TOML_DESCRIPTION = [
     'readme = "README.md"\n',
     "\n",
     "[tool.poetry.scripts]\n",
-    'run = "build:start"\n',
+    'app-start = "app.start:run"\n',
     "\n",
 ]
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "create-api-app"
-version = "2.0.1"
+version = "2.0.2"
 description = "A quickstart tool for creating a FastAPI project with a NextJS frontend."
 authors = ["Ryan Partridge <rpartridge101@gmail.com>"]
 readme = "README.md"
@@ -14,7 +14,6 @@ typer = {extras = ["all"], version = "^0.12.3"}
 pytest = "^8.2.2"
 build_nextjs_app = "^1.0.2"
 docker = "^7.1.0"
-
 
 [build-system]
 requires = ["poetry-core"]
