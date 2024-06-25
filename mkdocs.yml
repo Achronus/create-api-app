@@ -49,6 +49,7 @@ nav:
       - Customization: customization/index.md
       - Styling: customization/styling.md
       - Removing Unwanted Packages: customization/removal.md
+      - Changing Database: customization/database.md
 
 extra:
   version:

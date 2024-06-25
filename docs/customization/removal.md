@@ -1,10 +1,13 @@
 # Removing Unwanted Packages
 
+!!! note
+    This section focuses on updates to the [`frontend`](#removing-unwanted-packages) and [`root`](#removing-unwanted-packages) directories.
+
 Sometimes you might create a project where you don't want or need to use:
 
-- [Clerk](#removing-unwanted-packages) <!-- omit in toc -->
-- [Stripe](#removing-unwanted-packages)
-- [Uploadthing](#removing-unwanted-packages)
+- [Clerk](https://clerk.com/)
+- [Stripe](https://docs.stripe.com/)
+- [Uploadthing](https://uploadthing.com/)
 
 While we haven't integrated this directly into the tool, you can manually remove the ones you don't want. This is a pretty simple process and only requires a few modifications.
 
