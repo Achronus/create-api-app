@@ -24,6 +24,7 @@ Create API App is a predefined application template for creating projects with a
 
 -   :simple-nextdotjs: [__Next.js__](https://nextjs.org/) our React framework
 -   :simple-tailwindcss: [__Tailwind CSS__](https://tailwindcss.com/) for utility styling
+-   :simple-typescript: [__TypeScript__](https://www.typescriptlang.org/) for data type validation
 -   :custom-uploadthing: [__Uploadthing__](https://uploadthing.com/) for file management
 -   :simple-clerk: [__Clerk__](https://clerk.com/docs/quickstarts/nextjs) for user authentication
 -   :simple-stripe: [__Stripe__](https://stripe.com/docs) for payments

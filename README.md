@@ -44,6 +44,7 @@ All projects are created using the same stack, consisting of the following:
 
    - [NextJS](https://nextjs.org/)
    - [TailwindCSS](https://tailwindcss.com/)
+   - [TypeScript](https://www.typescriptlang.org/)
    - [Uploadthing](https://uploadthing.com/)
    - [Clerk](https://clerk.com/docs/quickstarts/nextjs)
    - [Stripe](https://stripe.com/docs)

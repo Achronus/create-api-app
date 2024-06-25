@@ -43,6 +43,7 @@ nav:
       - License: getting-started/license.md
   - File Structure:
       - File Structure: file-structure/index.md
+      - Root Files: file-structure/root.md
       - Frontend: file-structure/frontend.md
       - Backend: file-structure/backend.md
   - Customization:
