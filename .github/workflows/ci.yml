@@ -29,7 +29,4 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material
-      - run: mkdocs build
-      - name: Copy CNAME file
-        run: echo "create.achronus.dev" > site/CNAME
       - run: mkdocs gh-deploy --force
