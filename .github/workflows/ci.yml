@@ -29,9 +29,9 @@ jobs:
           restore-keys: |
             mkdocs-material-
       - run: pip install mkdocs-material
+      - name: Fetch gh-pages branch
+        run: git fetch origin gh-pages:gh-pages
       - run: mkdocs build
       - name: Copy CNAME file
         run: cp CNAME site/
-      - name: Fetch gh-pages branch
-        run: git fetch origin gh-pages:gh-pages
       - run: mkdocs gh-deploy --force
