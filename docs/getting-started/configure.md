@@ -170,7 +170,7 @@ We also recommend getting familiar with the project file structure using the lin
 
     ---
 
-    Home to the [`Next.js`](#installation) files.
+    Home to the [`Next.js`](#where-to-go-next) files.
 
     [:octicons-arrow-right-24: Frontend file structure](../file-structure/frontend.md)
 
@@ -178,7 +178,7 @@ We also recommend getting familiar with the project file structure using the lin
 
     ---
 
-    Home to the [`FastAPI`](#installation) files.
+    Home to the [`FastAPI`](#where-to-go-next) files.
 
     [:octicons-arrow-right-24: Backend file structure](../file-structure/backend.md)
 
