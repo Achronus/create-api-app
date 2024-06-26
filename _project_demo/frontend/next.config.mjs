@@ -2,18 +2,35 @@
 
 import path from "path";
 import dotenv from "dotenv";
-import dotenvExpand from "dotenv-expand";
+import fs from "fs";
 
-const loadEnv = (filePath) => {
-  const env = dotenv.config({ path: filePath });
-  dotenvExpand.expand(env);
+const loadEnv = (filename) => {
+  const currentDir = process.cwd();
+  const rootDir = path.parse(currentDir).dir;
+
+  const localFile = path.resolve(currentDir, filename);
+  const rootFile = path.resolve(rootDir, filename);
+
+  const localExists = fs.existsSync(localFile);
+  const rootExists = fs.existsSync(rootFile);
+
+  if (!localExists && !rootExists) {
+    throw new Error(
+      `Missing environment file: '${filename}'!`
+    );
+  }
+
+  const filepath = localExists ? localFile : rootFile;
+
+  const env = dotenv.config({ path: filepath });
+  return env.parsed;
 };
 
-loadEnv(path.resolve(process.cwd(), ".env.local"));
-
+const env = loadEnv(".env.local");
 const apiUrl = process.env.FASTAPI_CONNECTION_URL;
 
 const nextConfig = {
+  env: env,
   images: {
     remotePatterns: [
       {
