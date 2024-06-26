@@ -1,6 +1,545 @@
 # Frontend Files
 
+The `frontend` directory is home to all the [`Next.js`](#frontend-files) and [`React`](#frontend-files) assets.
+
+??? Note "Frontend Folder Structure"
+
+    ```shell title=""
+    frontend
+    │   .eslintrc.json
+    │   components.json
+    │   next.config.mjs
+    │   package.json
+    │   postcss.config.mjs
+    │   tailwind.config.ts
+    │   tsconfig.json
+    ├───public
+    │       next.svg
+    │       vercel.svg
+    └───src
+        ├───app
+        │   │   favicon.ico
+        │   │   globals.css
+        │   │   layout.tsx
+        │   │   page.tsx
+        │   │
+        │   └───api
+        │       └───uploadthing
+        │           └───list-files
+        │                   route.ts
+        ├───components
+        ├───data
+        ├───hooks
+        │       useFetchData.tsx
+        │       useFetchImgs.tsx
+        ├───layouts
+        ├───lib
+        │       constants.ts
+        │       queries.ts
+        │       utils.ts
+        ├───pages
+        │   └───Homepage
+        │           Homepage.tsx
+        │           index.tsx
+        └───types
+                api.ts
+    ```
+
+## Root Files
+
+At the root level, we have numerous `configuration` files:
+
+- [`.eslintrc.json`](#root-files) - the config file for [`eslint`](https://eslint.org/). Typically, you won't ever need to touch this
+- [`components.json`](#root-files) - the config file for [`Shadcn/ui`](https://ui.shadcn.com/docs/components-json). We recommend changing the `style` and `baseColor` in this file to your preference
+- [`next.config.mjs`](#next-config) - the config file for [`Next.js`](https://nextjs.org/). We'll discuss this in more detail shortly
+- [`package.json`](#root-files) - the package management file for `Node`. It contains a list of all the projects `dependencies` and commands that can be run
+- [`postcss.config.mjs`](#root-files) - the config file for [`postcss`](https://postcss.org/). This is installed by default with [`Tailwind CSS`](https://tailwindcss.com/)
+- [`tailwind.config.ts`](#root-files) - the config file for [`Tailwind CSS`](https://tailwindcss.com/). You'll likely visit this file occassionally for adding custom theme styles. You can read more about it in their [documentation](https://tailwindcss.com/docs/theme)
+- [`tsconfig.json`](#root-files) - the config file for [`TypeScript`](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
+
+### Next Config
+
+We've preconfigured the [`next.config.mjs`](#next-config) file to extract the environment variables from [`.env.local`](root.md#environment-file) and automatically apply them to the project.
+
+As you'll see in the file, whenever you need to access an `environment` variable you can use `process.env.<variable_name>`.
+
+Additionally, we've configured it to automatically redirect to the `FastAPI` backend to easy fetch the JSON data provided by your routes when using `/api/<path>`.
+
+Unless you have something specific in mind, you don't need to configure this file any further.
+
+Here's what it looks like:
+
+```js title="next.config.mjs"
+/** @type {import('next').NextConfig} */
+
+import path from "path";
+import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
+
+const loadEnv = (filePath) => {
+  const env = dotenv.config({ path: filePath });
+  dotenvExpand.expand(env);
+};
+
+loadEnv(path.resolve(process.cwd(), ".env.local"));
+
+const apiUrl = process.env.FASTAPI_CONNECTION_URL;
+
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/*`,
+      },
+      {
+        protocol: "https",
+        hostname: apiUrl,
+        pathname: `/api/*`,
+      },
+    ],
+  },
+  rewrites: async () => {
+    return [
+      {
+        source: "/api/:path*",
+        destination: `${apiUrl}/api/:path*`,
+      },
+      {
+        source: "/docs",
+        destination: `${apiUrl}/docs`,
+      },
+      {
+        source: "/openapi.json",
+        destination: `${apiUrl}/openapi.json`,
+      },
+    ];
+  },
+};
+
+export default nextConfig;
+```
+
+### Directories
+
+There are two directories:
+
+- [`public`](#directories) - a place to store static files, such as images. This allows referencing to images from the base URL (`/`). You can read more about it in the [Next.js documentation](https://nextjs.org/docs/app/building-your-application/optimizing/static-assets)
+- [`src`](#source-directory) - the root directory for all your applications source code. It helps to separate your application code from the configuration files. You can think of it as the heart of the `frontend`. We'll discuss this next
+
+## Source Directory
+
+The [`src`](#source-directory) directory is made up of multiple sub-directories.
+
+There are 8 in total: [`app`](#app), [`components`](#components), [`data`](#data), [`hooks`](#hooks), [`layouts`](#layouts), [`lib`](#lib), [`pages`](#pages), [`types`](#types).
+
+### App
+
 !!! warning "Work in Progress"
-    Well this is awkward...:face_with_peeking_eye: You've caught us at a bad time!
-    
-    Please check back later.
+    Please check back tomorrow.
+
+### Components
+
+The [`components`](#components) directory houses all your global reusable `React` components that are shared across the project.
+
+For example, when you add [`Shadcn/ui`](https://ui.shadcn.com/docs/cli#add) components using their CLI they can be found here inside a `ui` directory in this folder.
+
+### Data
+
+A place to store all your static [`data`](#data) arrays.
+
+For example, let's say you have a list of categories in the form of `select` boxes that you want to display on your website, but need them to connect to the `backend` to retrieve the available options.
+
+You can do something like this:
+
+```ts title="data/details.ts"
+import { CategoryDetails } from "@/types/option";
+
+export const SpecialisationDetails: CategoryDetails[] = [
+  {
+    name: "class", // (1)!
+    heading: "What class?",  // (2)!
+    queryKey: "classes",  // (3)!
+  },
+  {
+    name: "subclass",
+    heading: "What sub-class?",
+    queryKey: "subclass",
+  },
+  {
+    name: "school",
+    heading: "What school?",
+    queryKey: "school",
+  },
+];
+```
+
+1. A [`name`](#data) to differentiate and assign the correct information to each [`select`](#data) box
+2. A [`heading`](#data) for identify what each [`select`](#data) box contains
+3. A [`queryKey`](#data) to assign to the URL when the input is selected. E.g., if we have a class input of [`barbarian`](#data) our query would be [`?classes=barbarian`](#data)
+
+??? question "Why use query keys?"
+    Query keys are great for storing `state` in the URL. In this case, we can directly pass this information back to our `FastAPI` backend which can retrieve the desired data from the database.
+
+    Interested in learning more about `URL state`? ByteGrad offers a great [YouTube video](https://www.youtube.com/watch?v=ukpgxEemXsk) on the topic. 
+
+### Hooks
+
+The [`hooks`](#hooks) folder houses your custom hooks that are used globally throughout your `Next.js` project.
+
+The project comes preconfigured with two of them: [useFetchData](#usefetchdata), [useFetchImgs](#usefetchimgs)
+
+#### useFetchData
+
+This hook uses the [Next.js FetchAPI](https://nextjs.org/docs/app/api-reference/functions/fetch) to retrieve data from a `URL` with an optional set of `options`. It returns the received `data`, an `isLoading` flag and an `error` object (if any).
+
+```ts title="hooks/useFetchData.tsx"
+import { useEffect, useState } from "react";
+
+const useFetchData = <T,>(url: string, options: object = {}) => {
+  const [data, setData] = useState<T | null>(null);
+  const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!url) {
+      return;
+    }
+
+    const fetchData = async (url: string, options: object = {}) => {
+      try {
+        const response = await fetch(url, options);
+
+        if (response.ok) {
+          const result = await response.json();
+          setData(result);
+        }
+      } catch (error: any) {
+        console.error("Error fetching data:", error);
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData(url, options);
+  }, [url]);
+
+  return { data, isLoading, error };
+};
+
+export default useFetchData;
+```
+
+It's extremely easy to use straight out of the box. Simply call it inside a component with a URL and a specified type.
+
+Here's a simple example:
+
+```ts title="Example usage"
+"use client";
+
+import useFetchData from "@/hooks/useFetchData";
+
+type SpellData = {
+  counts: int;
+  results: object[];
+}
+
+
+const CantripSpells = () => {
+  const {data, isLoading, error} = useFetchData<SpellData>(
+    "https://www.dnd5eapi.co/api/spells?level=0"
+  );
+
+  return (
+    <div>
+      {data?.results.map((item)) => (
+        // JSX
+        // ....
+      ))}
+    </div>
+  );
+};
+```
+
+#### useFetchImgs
+
+This hook uses the [`useFetchData`](#usefetchdata) hook with a predefined URL to extract `names` and `images` from the custom `uploadthing/list-files` route.
+
+```ts title="hooks/useFetchImgs.tsx"
+import { UTListFileUrl } from "@/lib/constants";
+import { zip } from "@/lib/utils";
+import { UTImage } from "@/types/api";
+import { useEffect, useState } from "react";
+import useFetchData from "./useFetchData";
+
+
+const useFetchImgs = (imgNames: string) => {
+  const [imgData, setImgData] = useState<UTImage[]>([]);
+
+  const { data, isLoading, error } = useFetchData(
+    `${UTListFileUrl}?filenames=${imgNames}`,
+    {
+      headers: {
+        Accept: "application/json",
+        method: "GET",
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (!imgNames) {
+      return;
+    }
+
+    if (data) {
+      const urlTemplate = `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}`;
+
+      const result = zip(imgNames.split(","), data);
+
+      let imgUrls: UTImage[] = [];
+      result.map(([name, url]) => {
+        imgUrls.push({
+          name: name,
+          url: `${urlTemplate}/${url}`,
+        });
+      });
+
+      setImgData(imgUrls);
+    }
+  }, [imgNames, data]);
+
+  return { imgData, isLoading, error };
+};
+
+export default useFetchImgs;
+```
+
+Like the other hooks, it works straight out of the box. Just give it a string of filenames, separated by commas, that exist in the `uploadthing` bucket attached to the project through its `API keys`.
+
+You'll then get an array of objects with `names` and `urls` that can be allocated to [`Next.js Image`](https://nextjs.org/docs/app/api-reference/components/image) components.
+
+Here's an example:
+
+```ts title="Example usage"
+"use client";
+
+import useFetchImgs from "@/hooks/useFetchImgs";
+
+
+const SpellImages = () => {
+  const {imgData, isLoading, error} = useFetchImgs(
+    "wall-of-stone,acid-arrow"
+  );
+
+  return (
+    <div>
+      {imgData?.map((img)) => (
+        <Image
+          src={img.url}
+          alt={img.name}
+          fill
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+### Layouts
+
+A directory for storing `layout` based components such as, `Heading`, `Footer`, `Navbar`, and `Sidebar`.
+
+Layouts are often built using multiple components and are integral pieces of your project for providing structure. Because of their importance, we find it easier to have them allocated to a separate folder for quick and easy access!
+
+### Lib
+
+The [`lib`](#lib) directory contains global application-specific files. These could include `utility` functions, `constants`, facades and more.
+
+We've preconfigured this with a few files: [`constants.ts`](#constants), [`queries.ts`](#queries), [`utils.ts`](#utils).
+
+#### Constants
+
+Theres only one constant added to the project and thats the `uploadthing` route path used to access the [`uploadthing/list-files`](#app) route.
+
+We use this in the [`useFetchImgs`](#usefetchimgs) hook.
+
+```ts title="lib/constants.ts"
+export const UTListFileUrl = "/api/uploadthing/list-files";
+```
+
+#### Queries
+
+We've added two query specific utility functions to the project:
+
+- [`addQueries`](#queries) - `adds` an array of URL queries to the values extracted from the [`useSearchParams()`](https://nextjs.org/docs/app/api-reference/functions/use-search-params) hook and converts them into a string prepended with a `?`
+- [`removeQueries`](#queries) - `removes` an array of URL queries from the values extracted from the [`useSearchParams()`](https://nextjs.org/docs/app/api-reference/functions/use-search-params) hook and converts them into a string prepended with a `?`
+
+=== "Functions"
+
+    ```ts title="lib/queries.ts"
+    import { ReadonlyURLSearchParams } from "next/navigation";
+
+    export const addQueries = (
+      searchParams: ReadonlyURLSearchParams | null,
+      queries: { name: string; value: string }[]
+    ) => {
+      const params = searchParams
+        ? new URLSearchParams(searchParams.toString())
+        : new URLSearchParams();
+
+      queries.forEach(({ name, value }) => {
+        params.set(name, value);
+      });
+
+      return `?${params.toString()}`;
+    };
+
+
+    export const removeQueries = (
+      searchParams: ReadonlyURLSearchParams | null,
+      queryNames: string[]
+    ) => {
+      const params = searchParams
+        ? new URLSearchParams(searchParams.toString())
+        : new URLSearchParams();
+
+      queryNames.forEach((query) => {
+        params.delete(query);
+      });
+
+      return `?${params.toString()}`;
+    };
+    ```
+
+=== "addQueries Example"
+
+    ```ts title="components/example.tsx"
+    "use client";
+
+    import { addQueries } from "@/lib/queries";
+    import { useSearchParams } from "next/navigation";
+
+    const Example = () => {
+      const searchParams = useSearchParams();
+
+      const newParams = addQueries(searchParams, [
+        { name: "limit", value: "10" },
+        { name: "skip", value: "5" },
+      ]);
+
+      return (
+        <div>
+          {/* JSX */}
+          {/* ... */}
+        </div>
+      );
+    };
+
+    export default Example;
+    ```
+
+=== "removeQueries Example"
+
+    ```ts title="components/example.tsx"
+    "use client";
+
+    import { removeQueries } from "@/lib/queries";
+    import { useSearchParams } from "next/navigation";
+
+    const Example = () => {
+      const searchParams = useSearchParams();
+
+      const newParams = removeQueries(searchParams, [
+        "limit",
+        "skip",
+      ]);
+
+      return (
+        <div>
+          {/* JSX */}
+          {/* ... */}
+        </div>
+      );
+    };
+
+    export default Example;
+    ```
+
+#### Utils
+
+We've added three utility functions to the project:
+
+- [`cn`](#lib) - a function for handling `Tailwind CSS` classes and compressing them into a single string
+- [`zip`](#lib) - a `JavaScript` representation of the `Python` `zip` function. Allowing iteration over several arrays simultaneously
+- [`title`](#lib) - a lightweight function that uppercases the first value in a string
+
+```ts title="lib/utils.ts"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function zip(...arrays: any[]) {
+  const minLength = Math.min(...arrays.map((arr) => arr.length));
+  return Array.from({ length: minLength }, (_, i) =>
+    arrays.map((array) => array[i])
+  );
+}
+
+export function title(item: string) {
+  return item[0].toUpperCase() + item.substring(1, item.length);
+}
+```
+
+### Pages
+
+The `pages` directory is used to store your applications webpages.
+
+Pages are often made up of a little bit of everything. These can be as simple as a `.tsx` file or a subdirectory with its own unique components.
+
+It comes preconfigured with a `Homepage` directory and `Homepage.tsx` file. We recommend starting here when first using the template! It connects directly to the [`app/page.tsx`](#app) file.
+
+!!! info
+    We use an `index.tsx` file to keep the import statements tidy! Here's the difference with and without an `index.tsx` file:
+
+    ```ts title=""
+    import Homepage from "@/pages/Homepage/Homepage"; // without
+    import Homepage from "@/pages/Homepage"; // with
+    ```
+
+This is what the starting template looks like:
+
+```ts title="Homepage/Homepage.tsx"
+type Props = {};
+
+const Homepage = ({}: Props) => {
+  return (
+    <main>
+      <section></section>
+    </main>
+  );
+};
+
+export default Homepage;
+```
+
+### Types
+
+The [`types`](#types) directory contains all the global [`TypeScript`](https://www.typescriptlang.org/) types for the project.
+
+As your project grows, so will your [`TypeScript`](#types) types. It's often better to keep them in one location and categoried into separate files for better project management.
+
+We've preconfigured it with a single type `UTImage`. This connects to our custom [`uploadthing`](#types) [`useFetchImgs`](#usefetchimgs) hook.
+
+Here's what it looks like:
+
+```ts title="types/api.ts"
+export type UTImage = {
+  name: string;
+  url: string;
+};
+```
