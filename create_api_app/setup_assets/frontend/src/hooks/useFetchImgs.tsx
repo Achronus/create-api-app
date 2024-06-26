@@ -2,54 +2,51 @@ import { UTListFileUrl } from "@/lib/constants";
 import { zip } from "@/lib/utils";
 import { UTImage } from "@/types/api";
 import { useEffect, useState } from "react";
+import useFetchData from "./useFetchData";
 
+/**
+ * A React hook for retrieving image names and URLs from the connected uploadthing bucket.
+ * @param imgNames a string of image names found in the uploadthing bucket separated by commas
+ * @returns an array of UTImage objects
+ * @example
+ * {imgData, isLoading, error} = useFetchImgs("wall-of-stone,wall-of-thorns");
+ */
 const useFetchImgs = (imgNames: string) => {
-  const [imgUrls, setImgUrls] = useState<UTImage[]>([]);
-  const [isLoading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [imgData, setImgData] = useState<UTImage[]>([]);
+
+  const { data, isLoading, error } = useFetchData(
+    `${UTListFileUrl}?filenames=${imgNames}`,
+    {
+      headers: {
+        Accept: "application/json",
+        method: "GET",
+      },
+    }
+  );
 
   useEffect(() => {
     if (!imgNames) {
       return;
     }
 
-    const fetchUrl = async () => {
-      try {
-        const response = await fetch(`${UTListFileUrl}?filenames=${imgNames}`, {
-          headers: {
-            Accept: "application/json",
-            method: "GET",
-          },
+    if (data) {
+      const urlTemplate = `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}`;
+
+      const result = zip(imgNames.split(","), data);
+
+      let imgUrls: UTImage[] = [];
+      result.map(([name, url]) => {
+        imgUrls.push({
+          name: name,
+          url: `${urlTemplate}/${url}`,
         });
+      });
 
-        if (response.ok) {
-          const urlTemplate = `https://utfs.io/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}`;
-          let imgUrls: UTImage[] = [];
+      setImgData(imgUrls);
+    }
+  }, [imgNames, data]);
 
-          const data: string[] = await response.json();
-          const imgData = zip(imgNames.split(","), data);
-
-          imgData.map(([name, url]) => {
-            imgUrls.push({
-              name: name,
-              url: `${urlTemplate}/${url}`,
-            });
-          });
-
-          setImgUrls(imgUrls);
-        }
-      } catch (error: any) {
-        console.error("Error fetching images:", error);
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUrl();
-  }, [imgNames]);
-
-  return { imgUrls, isLoading, error };
+  return { imgData, isLoading, error };
 };
 
 export default useFetchImgs;

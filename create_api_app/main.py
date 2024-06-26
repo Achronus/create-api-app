@@ -94,18 +94,22 @@ def main(
 
     console.print(project_table(name, "MongoDB"))
 
-    # Replace project if exists
-    if os.path.exists(path):
-        handle_existing(name)
-        console.print(f"\nRemoving {name_print} and creating a new one...\n")
-        shutil.rmtree(path)
-        check_project_deleted(path)
-    else:
-        console.print(f"\nCreating project {name_print}...")
+    try:
+        # Replace project if exists
+        if os.path.exists(path):
+            handle_existing(name)
+            console.print(f"\nRemoving {name_print} and creating a new one...\n")
+            shutil.rmtree(path)
+            check_project_deleted(path)
+        else:
+            console.print(f"\nCreating project {name_print}...")
 
-    # Create and move into directory
-    os.makedirs(path)
-    os.chdir(path)
+        # Create and move into directory
+        os.makedirs(path)
+        os.chdir(path)
+    except Exception as e:
+        console.print(f"Something went wrong:\n  {e}")
+        raise typer.Abort()
 
     # Run application
     console.print("  Stages to complete:")
