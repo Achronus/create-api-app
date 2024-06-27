@@ -176,7 +176,7 @@ class TestFrontendAssets:
 
         valid = False
         for line in lines[:16]:
-            if line.startswith("loadEnv"):
+            if line.startswith("const loadEnv ="):
                 valid = True
                 break
 

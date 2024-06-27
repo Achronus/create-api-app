@@ -19,7 +19,7 @@ class CleanupController(ControllerBase):
         pass
 
     def clean_frontend(self) -> None:
-        """Removes files from the backend."""
+        """Removes files from the frontend."""
         files = [
             os.path.join(self.project_paths.FRONTEND, ".gitignore"),
             os.path.join(self.project_paths.FRONTEND, "bun.lockb"),
@@ -28,3 +28,7 @@ class CleanupController(ControllerBase):
 
         for file in files:
             os.remove(file)
+
+        public_dir = os.path.join(self.project_paths.FRONTEND, "public")
+        for file in os.listdir(public_dir):
+            os.remove(os.path.join(public_dir, file))

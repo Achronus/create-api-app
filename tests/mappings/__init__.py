@@ -17,8 +17,6 @@ FRONTEND_ROOT_FILES = [
     "next.config.mjs",
     "package.json",
     "postcss.config.mjs",
-    "public\\next.svg",
-    "public\\vercel.svg",
     "public",
     "src\\app",
     "src\\components",
