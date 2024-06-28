@@ -10,7 +10,10 @@ Each project can be configured in three easy steps:
 
 Inside the `root` directory access the `.env.local` file and follow the links to get your API keys. Simply add them at their corresponding location.
 
-The file will look similar to this:
+The file will look something like this:
+
+!!! note
+    Some API keys may be missing depending on the packages you have [`excluded`](installation.md#installation).
 
 ```python title=".env.local"
 # The URL to connect FastAPI and NextJS together - used in `frontend/next.config.mjs`

@@ -12,13 +12,29 @@
     pip install create_api_app
     ```
 
-2. Create a new project:
+2. Create a new project with just a name:
 
     ```bash title=""
     create-api-app <project_name> # (1)!
     ```
 
-      1. Replace `<project_name>` with the name of your choice!
+    1. Replace `<project_name>` with the name of your choice!
+
+3. Or, create a new project that excludes certain packages:
+
+    ```bash title=""
+    create-api-app <project_name> <exclusions> # (1)!
+    ```
+
+    1. Exclusion options: `c`, `u`, `s`, `cs`, `cu`, `us`, `cus`. <br/> _`c` = `Clerk`, `u` = `Uploadthing`, `s` = `Stripe`_
+
+    For example, let's say we want to create a project [`without`](#installation) `Clerk` and `Stripe`.
+
+    We would do this:
+
+    ```bash title=""
+    create-api-app my_first_project cs
+    ```
 
 :sparkles: And that's it! :sparkles:
 
