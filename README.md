@@ -42,14 +42,18 @@ All projects are created using the same stack, consisting of the following:
 
 2. Frontend
 
-   - [NextJS](https://nextjs.org/)
-   - [TailwindCSS](https://tailwindcss.com/)
-   - [TypeScript](https://www.typescriptlang.org/)
-   - [Uploadthing](https://uploadthing.com/)
-   - [Clerk](https://clerk.com/docs/quickstarts/nextjs)
-   - [Stripe](https://stripe.com/docs)
-   - [Lucide React](https://lucide.dev/)
-   - [Shadcn UI](https://ui.shadcn.com/)
+   a. Core:
+
+     - [NextJS](https://nextjs.org/)
+     - [TailwindCSS](https://tailwindcss.com/)
+     - [TypeScript](https://www.typescriptlang.org/)
+     - [Lucide React](https://lucide.dev/)
+     - [Shadcn UI](https://ui.shadcn.com/)
+
+   b. Optional:
+     - [Clerk](https://clerk.com/docs/quickstarts/nextjs)
+     - [Uploadthing](https://uploadthing.com/)
+     - [Stripe](https://stripe.com/docs)
 
 _Note: all libraries and packages are automatically installed to their latest versions when running the tool._
 
@@ -65,10 +69,13 @@ We've also added some extra files too! You can find out more about them in our [
    pip install create_api_app
    ```
 
-3. Create a project:
+3. Create a project with a `name` and an `optional` string of `exclusion` characters for the `optional` packages.
+
+   Exclusion options: `c`, `u`, `s`, `cs`, `cu`, `us`, `cus`.
+   _`c` = `Clerk`, `u` = `Uploadthing`, `s` = `Stripe`_
 
    ```python
-   create-api-app <project_name>
+   create-api-app <project_name> <exclusions>
    ```
 
 And that's it! You'll find two folders in your project, one called `frontend` (for NextJS) and another called `backend` (for FastAPI).

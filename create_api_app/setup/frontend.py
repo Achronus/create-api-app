@@ -2,13 +2,14 @@ import os
 import shutil
 import subprocess
 
-from create_api_app.conf.constants.content import FrontendContent
+from create_api_app.conf.constants import PACKAGES
+from create_api_app.conf.constants.content import EnvFileContent, FrontendContent
 from create_api_app.conf.constants.filepaths import (
     ProjectPaths,
     SetupAssetsDirNames,
     SetupDirPaths,
 )
-from create_api_app.conf.file_handler import replace_content
+from create_api_app.conf.file_handler import append_to_file, replace_content
 from .base import ControllerBase
 
 
@@ -43,7 +44,20 @@ class FrontendStaticAssetController(ControllerBase):
                 self.update_files,
                 "Updating [green]core[/green] files and adding [green]new[/green] ones",
             ),
+            (
+                self.update_env,
+                "Updating [yellow].env.local[/yellow] API keys",
+            ),
         ]
+
+        for package in PACKAGES.items:
+            if package.name == "uploadthing" and not package.exclude:
+                tasks.append(
+                    (
+                        self.add_uploadthing,
+                        "Adding [red]uploadthing[/red] files",
+                    ),
+                )
 
         super().__init__(tasks, project_paths)
 
@@ -76,4 +90,26 @@ class FrontendStaticAssetController(ControllerBase):
             old="extend: {",
             new=self.content.tailwind_font(),
             path=self.project_paths.TAILWIND_CONF,
+        )
+
+        replace_content(
+            old="new-york",
+            new="default",
+            path=self.project_paths.SHAD_CONF,
+        )
+
+    def update_env(self) -> None:
+        """Adds API keys to `.env.local` based on `exclude` command parameter."""
+        env_generator = EnvFileContent(PACKAGES)
+
+        extra_content = "\n" + env_generator.make()
+
+        append_to_file(extra_content, self.project_paths.ENV_LOCAL)
+
+    def add_uploadthing(self) -> None:
+        """Adds `uploadthing` files to the project."""
+        shutil.copytree(
+            SetupDirPaths.UPLOADTHING_ASSETS,
+            self.project_paths.FRONTEND,
+            dirs_exist_ok=True,
         )

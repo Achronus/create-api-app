@@ -2,7 +2,9 @@ import os
 import shutil
 import textwrap
 import time
+from typing import Optional
 
+from create_api_app.conf.constants import ExcludeOptions, PACKAGES
 from create_api_app.setup.clean import CleanupController
 from create_api_app.setup.frontend import (
     FrontendStaticAssetController,
@@ -10,7 +12,11 @@ from create_api_app.setup.frontend import (
 )
 from create_api_app.setup.backend import VEnvController, BackendStaticAssetController
 
-from .conf.constants.filepaths import ProjectPaths, set_project_name
+from create_api_app.conf.constants.filepaths import (
+    ProjectPaths,
+    set_exclude_value,
+    set_project_name,
+)
 from .setup import run_frontend_tasks, run_tasks
 from .utils.helper import strip_whitespace_and_dashes
 from .utils.printables import project_table, project_complete_panel
@@ -79,6 +85,12 @@ def main(
     name: Annotated[
         str, typer.Argument(help="The name of the project", show_default=False)
     ],
+    exclude: Annotated[
+        Optional[ExcludeOptions],
+        typer.Argument(
+            help="Exclude packages from the install. Accepts a combination of: (c)lerk, (u)ploadthing, (s)tripe",
+        ),
+    ] = None,
 ) -> None:
     """Create a FastAPI and NextJS project with NAME and an optional DB_URL."""
     check_docker_running(console)
@@ -88,6 +100,10 @@ def main(
 
     # Store arguments as env variables
     set_project_name(name)
+    set_exclude_value(exclude if exclude else "")
+
+    # Update packages
+    PACKAGES.update(exclude)
 
     # Provide pretty print formats
     name_print = f"[magenta]{name}[/magenta]"
@@ -146,9 +162,16 @@ def main(
     console.print(
         textwrap.dedent(f"""
     [dark_goldenrod]Not sure where to start?[/dark_goldenrod]
-      - [green][link={project_paths.ENV_LOCAL}].env.local[/link][/green] - Update your API keys
-      - [yellow][link={project_paths.SETTINGS}]config/settings.py[/link][/yellow] - Update the [yellow]DB_NAME[/yellow] and [yellow]DB_COLLECTION_NAME[/yellow] for your [green]MongoDB[/green] database
-      - [yellow][link={project_paths.MODELS}]models/__init__.py[/link][/yellow] - Update the [green]ExampleDB[/green] model\n
+      [cyan]Core[/cyan]
+        - [magenta][link={project_paths.ENV_LOCAL}].env.local[/link][/magenta] - Update your API keys
+
+      [cyan]Backend[/cyan]
+        - [yellow][link={project_paths.SETTINGS}]config/settings.py[/link][/yellow] - Update the [yellow]DB_NAME[/yellow] and [yellow]DB_COLLECTION_NAME[/yellow] for your [yellow]MongoDB[/yellow] database
+        - [yellow][link={project_paths.MODELS}]models/__init__.py[/link][/yellow] - Update the [yellow]ExampleDB[/yellow] model
+
+      [cyan]Frontend[/cyan]
+        - [green][link={project_paths.LAYOUT}]app/layout.tsx[/link][/green] - Update the [green]metadata[/green] and [green]font style[/green]
+        - [green][link={project_paths.HOMEPAGE}]pages/Homepage/Homepage.tsx[/link][/green] - Update the content for the [green]homepage[/green]\n
     """)
     )
 

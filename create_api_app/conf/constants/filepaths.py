@@ -11,6 +11,8 @@ class SetupAssetsDirNames:
     BACKEND = "backend"
     APP = "app"
 
+    UPLOADTHING = "uploadthing"
+
 
 class AssetFilenames:
     """A storage container for asset filenames."""
@@ -33,6 +35,7 @@ class SetupDirPaths:
     BACKEND_ASSETS = DIRPATHS_DICT[SetupAssetsDirNames.BACKEND]
     FRONTEND_ASSETS = DIRPATHS_DICT[SetupAssetsDirNames.FRONTEND]
     ROOT_ASSETS = DIRPATHS_DICT["root"]
+    UPLOADTHING_ASSETS = DIRPATHS_DICT[SetupAssetsDirNames.UPLOADTHING]
 
 
 def __dotenv_setter(name: str, value: str) -> None:
@@ -43,12 +46,20 @@ def set_project_name(name: str) -> None:
     __dotenv_setter("PROJECT_NAME", name)
 
 
+def set_exclude_value(value: str) -> None:
+    __dotenv_setter("EXCLUDE", value)
+
+
 def set_poetry_version(version: str) -> None:
     __dotenv_setter("POETRY_VERSION", version)
 
 
 def get_project_name() -> str:
     return os.environ.get("PROJECT_NAME")
+
+
+def get_exclude_value() -> str:
+    return os.environ.get("EXCLUDE")
 
 
 def get_poetry_version() -> str:
@@ -72,3 +83,11 @@ class ProjectPaths:
         self.ENV_LOCAL = os.path.join(self.ROOT, ".env.local")
         self.SETTINGS = os.path.join(self.BACKEND_APP, "config", "settings.py")
         self.MODELS = os.path.join(self.BACKEND_APP, "models", "__init__.py")
+
+        self.PACKAGE_JSON = os.path.join(self.FRONTEND, "package.json")
+        self.NEXT_CONF = os.path.join(self.FRONTEND, "next.config.mjs")
+        self.SHAD_CONF = os.path.join(self.FRONTEND, "components.json")
+        self.LAYOUT = os.path.join(self.FRONTEND, "src", "app", "layout.tsx")
+        self.HOMEPAGE = os.path.join(
+            self.FRONTEND, "src", "pages", "Homepage", "Homepage.tsx"
+        )
