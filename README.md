@@ -1,3 +1,5 @@
+⚠️ DISCONTINUED IN FAVOUR OF [ZENTRA](https://github.com/Achronus/Zentra) ⚠️
+
 # Create API App Quickstart Tool <!-- omit in toc -->
 
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/create-api-app?style=flat&color=green)
